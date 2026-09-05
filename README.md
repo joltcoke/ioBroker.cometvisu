@@ -1,4 +1,5 @@
 ![Logo](admin/cometvisu.png)
+
 # ioBroker.cometvisu
 
 [![NPM version](https://img.shields.io/npm/v/iobroker.cometvisu.svg)](https://www.npmjs.com/package/iobroker.cometvisu)
@@ -12,130 +13,57 @@
 
 ## cometvisu adapter for ioBroker
 
-Serves the CometVisu visualization and provides its ioBroker WebSocket backend on one port
+Serves the CometVisu visualization through the ioBroker web adapter
 
-## Developer manual
-This section is intended for the developer. It can be deleted later.
+## Requirements
 
-### DISCLAIMER
+The visualisation is delivered by [iobroker.web](https://github.com/ioBroker/ioBroker.web) (7.0.3
+or newer), which also provides the login, the session and the socket connection. This adapter has
+no web server of its own.
 
-Please make sure that you consider copyrights and trademarks when you use names or logos of a company and add a disclaimer to your README.
-You can check other adapters for examples or ask in the developer community. Using a name or logo of a company without permission may cause legal problems for you.
+For charts and history data an ioBroker history adapter is needed, for example `iobroker.sql`
+(4.1.1 or newer).
 
-### Getting started
+## Setup
 
-You are almost done, only a few steps left:
-1. Create a new repository on GitHub with the name `ioBroker.cometvisu`
-1. Initialize the current folder as a new git repository:  
-    ```bash
-    git init -b main
-    git add .
-    git commit -m "Initial commit"
-    ```
-1. Link your local repository with the one on GitHub:  
-    ```bash
-    git remote add origin https://github.com/joltcoke/ioBroker.cometvisu
-    ```
+1. Install the adapter and create an instance.
+2. Pick a **CometVisu version**. The list offers the official releases from GitHub as well as any
+   archive you upload yourself; the selected one is unpacked when you save.
+3. Pick the **web instance** that should serve it.
 
-1. Push all files to the GitHub repo:  
-    ```bash
-    git push origin main
-    ```
-1. Add a new secret under https://github.com/joltcoke/ioBroker.cometvisu/settings/secrets. It must be named `AUTO_MERGE_TOKEN` and contain a personal access token with push access to the repository, e.g. yours. You can create a new token under https://github.com/settings/tokens.
+The visualisation is then reachable under `http://<host>:<web port>/cometvisu/`.
 
-1. Head over to [src/main.ts](src/main.ts) and start programming!
+## How it works
 
-### Best Practices
-We've collected some [best practices](https://github.com/ioBroker/ioBroker.repositories#development-and-coding-best-practices) regarding ioBroker development and coding in general. If you're new to ioBroker or Node.js, you should
-check them out. If you're already experienced, you should also take a look at them - you might learn something new :)
+The adapter keeps the selected build on disk and registers itself as an extension of the web
+adapter (`common.webExtension`), which mounts it under `/cometvisu`. Every release is unpacked into
+a directory of its own, so switching back to one that was used before costs no unpacking, and
+whatever is no longer referenced is removed at startup.
 
-### State Roles
-When creating state objects, it is important to use the correct role for the state. The role defines how the state should be interpreted by visualizations and other adapters. For a list of available roles and their meanings, please refer to the [state roles documentation](https://www.iobroker.net/#en/documentation/dev/stateroles.md).
+CometVisu learns where to connect through the `X-CometVisu-Backend-*` response headers, so no
+backend has to be configured in the visualisation itself. It loads the matching socket client
+library from the very server that serves it, which is why both socket modes of the web adapter
+work.
 
-**Important:** Do not invent your own custom role names. If you need a role that is not part of the official list, please contact the ioBroker developer community for guidance and discussion about adding new roles.
+## Uploading your own build
 
-### Scripts in `package.json`
-Several npm scripts are predefined for your convenience. You can run them using `npm run <scriptname>`
-| Script name | Description |
-|-------------|-------------|
-| `build` | Compile the TypeScript sources. |
-| `watch` | Compile the TypeScript sources and watch for changes. |
-| `test:ts` | Executes the tests you defined in `*.test.ts` files. |
-| `test:package` | Ensures your `package.json` and `io-package.json` are valid. |
-| `test:integration` | Tests the adapter startup with an actual instance of ioBroker. |
-| `test` | Performs a minimal test run on package files and your tests. |
-| `check` | Performs a type-check on your code (without compiling anything). |
-| `lint` | Runs `ESLint` to check your code for formatting errors and potential bugs. |
-| `translate` | Translates texts in your adapter to all required languages, see [`@iobroker/adapter-dev`](https://github.com/ioBroker/adapter-dev#manage-translations) for more details. |
-| `release` | Creates a new release, see [`@alcalzone/release-script`](https://github.com/AlCalzone/release-script#usage) for more details. |
-
-### Configuring the compilation
-The adapter template uses [esbuild](https://esbuild.github.io/) to compile TypeScript and/or React code. You can configure many compilation settings 
-either in `tsconfig.json` or by changing options for the build tasks. These options are described in detail in the
-[`@iobroker/adapter-dev` documentation](https://github.com/ioBroker/adapter-dev#compile-adapter-files).
-
-### Writing tests
-When done right, testing code is invaluable, because it gives you the 
-confidence to change your code while knowing exactly if and when 
-something breaks. A good read on the topic of test-driven development 
-is https://hackernoon.com/introduction-to-test-driven-development-tdd-61a13bc92d92. 
-Although writing tests before the code might seem strange at first, but it has very 
-clear upsides.
-
-The template provides you with basic tests for the adapter startup and package files.
-It is recommended that you add your own tests into the mix.
-
-### Publishing the adapter
-Using GitHub Actions, you can enable automatic releases on npm whenever you push a new git tag that matches the form 
-`v<major>.<minor>.<patch>`. We **strongly recommend** that you do. The necessary steps are described in `.github/workflows/test-and-release.yml`.
-
-Since you installed the release script, you can create a new
-release simply by calling:
-```bash
-npm run release
-```
-Additional command line options for the release script are explained in the
-[release-script documentation](https://github.com/AlCalzone/release-script#command-line).
-
-To get your adapter released in ioBroker, please refer to the documentation 
-of [ioBroker.repositories](https://github.com/ioBroker/ioBroker.repositories#requirements-for-adapter-to-get-added-to-the-latest-repository).
-
-### Test the adapter manually on a local ioBroker installation
-In order to install the adapter locally without publishing, the following steps are recommended:
-1. Create a GitHub repository for your adapter if you haven't already
-1. Push your code to the GitHub repository
-1. Use the ioBroker Admin interface or command line to install the adapter from GitHub:
-    * **Via Admin UI**: Go to the "Adapters" tab, click on "Custom Install" (GitHub icon), and enter your repository URL:
-        ```
-        https://github.com/joltcoke/ioBroker.cometvisu
-        ```
-        You can also install from a specific branch by adding `#branchname` at the end:
-        ```
-        https://github.com/joltcoke/ioBroker.cometvisu#dev
-        ```
-    * **Via Command Line**: Install using the `iob` command:
-        ```bash
-        iob url https://github.com/joltcoke/ioBroker.cometvisu
-        ```
-        Or from a specific branch:
-        ```bash
-        iob url https://github.com/joltcoke/ioBroker.cometvisu#dev
-        ```
-
-For later updates:
-1. Push your changes to GitHub
-1. Repeat the installation steps above (via Admin UI or `iob url` command) to update the adapter
+Any `CometVisu-*.tar.gz` can be uploaded in the settings. Uploads are kept apart by file name, so
+several of them can exist side by side and be switched between. Uploading the same name again
+replaces that entry.
 
 ## Changelog
+
 <!--
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
 
 ### **WORK IN PROGRESS**
-* (Florian Schirmer) initial release
+
+- (Florian Schirmer) initial release
 
 ## License
+
 MIT License
 
 Copyright (c) 2026 Florian Schirmer <jolt@tuxbox.org>

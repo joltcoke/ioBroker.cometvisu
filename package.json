@@ -1,7 +1,7 @@
 {
   "name": "iobroker.cometvisu",
   "version": "0.0.1",
-  "description": "Serves the CometVisu visualization and provides its ioBroker WebSocket backend on one port",
+  "description": "Serves the CometVisu visualization through the ioBroker web adapter",
   "author": {
     "name": "Florian Schirmer",
     "email": "jolt@tuxbox.org"
@@ -10,14 +10,15 @@
   "homepage": "https://github.com/joltcoke/ioBroker.cometvisu",
   "license": "MIT",
   "keywords": [
+    "ioBroker",
     "cometvisu",
     "visualization",
     "websocket",
-    "webserver"
+    "web"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/joltcoke/ioBroker.cometvisu.git"
+    "url": "git+https://github.com/joltcoke/ioBroker.cometvisu.git"
   },
   "engines": {
     "node": ">= 20"
@@ -50,7 +51,6 @@
     "admin{,/!(src)/**}/!(tsconfig|tsconfig.*|.eslintrc).{json,json5}",
     "admin{,/!(src)/**}/*.{html,css,png,svg,jpg,js}",
     "build/",
-    "www/",
     "io-package.json",
     "LICENSE"
   ],
