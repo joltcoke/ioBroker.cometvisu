@@ -60,7 +60,8 @@ replaces that entry.
 
 ### **WORK IN PROGRESS**
 
-- (Florian Schirmer) initial release
+- (joltcoke) keywords now contain "ioBroker", as the adapter checker asks for
+- (joltcoke) releases are published by the workflow through trusted publishing
 
 ## License
 
