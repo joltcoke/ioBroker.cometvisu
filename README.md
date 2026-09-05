@@ -57,8 +57,7 @@ replaces that entry.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-
-### **WORK IN PROGRESS**
+### 0.0.2 (2026-09-05)
 
 - (joltcoke) keywords now contain "ioBroker", as the adapter checker asks for
 - (joltcoke) releases are published by the workflow through trusted publishing

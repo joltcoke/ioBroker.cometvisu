@@ -1,128 +1,149 @@
 {
-    "common": {
-        "name": "cometvisu",
-        "version": "0.0.1",
-        "news": {
-            "0.0.1": {
-                "en": "initial release",
-                "de": "Erstveröffentlichung",
-                "ru": "Начальная версия",
-                "pt": "lançamento inicial",
-                "nl": "Eerste uitgave",
-                "fr": "Première version",
-                "it": "Versione iniziale",
-                "es": "Versión inicial",
-                "pl": "Pierwsze wydanie",
-                "uk": "Початкова версія",
-                "zh-cn": "首次出版"
-            }
-        },
-        "titleLang": {
-            "en": "CometVisu",
-            "de": "CometVisu",
-            "ru": "КометВизу",
-            "pt": "CometaVisu",
-            "nl": "KomeetVisu",
-            "fr": "ComèteVisu",
-            "it": "CometaVisu",
-            "es": "CometaVisu",
-            "pl": "CometVisu",
-            "uk": "CometVisu",
-            "zh-cn": "彗星维苏"
-        },
-        "desc": {
-            "en": "Serves the CometVisu visualization through the ioBroker web adapter",
-            "de": "Liefert die CometVisu-Visualisierung über den ioBroker-web-Adapter aus",
-            "ru": "Предоставляет визуализацию CometVisu через веб-адаптер ioBroker",
-            "pt": "Fornece a visualização CometVisu através do adaptador web do ioBroker",
-            "nl": "Levert de CometVisu-visualisatie via de ioBroker-webadapter",
-            "fr": "Fournit la visualisation CometVisu via l'adaptateur web d'ioBroker",
-            "it": "Fornisce la visualizzazione CometVisu tramite l'adattatore web di ioBroker",
-            "es": "Sirve la visualización CometVisu a través del adaptador web de ioBroker",
-            "pl": "Udostępnia wizualizację CometVisu przez adapter web ioBrokera",
-            "uk": "Надає візуалізацію CometVisu через вебадаптер ioBroker",
-            "zh-cn": "通过 ioBroker web 适配器提供 CometVisu 可视化界面"
-        },
-        "authors": ["Florian Schirmer <jolt@tuxbox.org>"],
-        "keywords": ["ioBroker", "cometvisu", "visualization", "websocket", "web"],
-        "licenseInformation": {
-            "type": "free",
-            "license": "MIT"
-        },
-        "platform": "Javascript/Node.js",
-        "icon": "cometvisu.png",
-        "enabled": true,
-        "extIcon": "https://raw.githubusercontent.com/joltcoke/ioBroker.cometvisu/main/admin/cometvisu.png",
-        "readme": "https://github.com/joltcoke/ioBroker.cometvisu/blob/main/README.md",
-        "loglevel": "info",
-        "tier": 3,
-        "mode": "daemon",
-        "type": "visualization",
-        "compact": true,
-        "connectionType": "local",
-        "dataSource": "push",
-        "adminUI": {
-            "config": "json"
-        },
-        "dependencies": [
-            {
-                "js-controller": ">=6.0.11"
-            },
-            {
-                "web": ">=7.0.3"
-            }
-        ],
-        "globalDependencies": [
-            {
-                "admin": ">=7.0.23"
-            }
-        ],
-        "messagebox": true,
-        "localLinks": {
-            "ui": {
-                "link": "%web_protocol%://%ip%:%web_port%/cometvisu/",
-                "name": "CometVisu",
-                "color": "greenLight",
-                "order": 10
-            }
-        },
-        "webExtension": "build/lib/web.js"
+  "common": {
+    "name": "cometvisu",
+    "version": "0.0.2",
+    "news": {
+      "0.0.2": {
+        "en": "keywords now contain \"ioBroker\", as the adapter checker asks for\nreleases are published by the workflow through trusted publishing",
+        "de": "Keywords enthalten nun „ioBroker“, wie es der Adapter-Checker verlangt\nReleases werden vom Workflow über Trusted Publishing veröffentlicht",
+        "ru": "ключевые слова теперь содержат слово «IOBroker», как того требует программа проверки адаптеров\nрелизы публикуются рабочим процессом через доверенную публикацию",
+        "pt": "as palavras-chave agora contêm “ioBroker”, como pede\nas versões são publicadas pelo fluxo de trabalho",
+        "nl": "trefwoorden bevatten nu „IOBroker”, zoals de adapterchecker vraagt\nreleases worden gepubliceerd door de workflow via Trusted Publishing",
+        "fr": "les mots clés contiennent désormais « ioBroker », comme le demande\nles versions sont publiées par le workflow via Trusted Publishing",
+        "it": "le parole chiave ora contengono «IOBroker», come chiede\nle release sono pubblicate dal workflow tramite Trusted Publishing",
+        "es": "las palabras clave ahora contienen «ioBroker», como pide el adaptador\nlos lanzamientos los publica el flujo de trabajo a través de publicaciones confiables",
+        "pl": "słowa kluczowe zawierają teraz „iOBroker”, o co prosi moduł sprawdzania adaptera\nwydania są publikowane przez przepływ pracy za pomocą zaufanego publikowania",
+        "uk": "Ключові слова тепер містять «IObroker», як просить перевірка адаптера\nвипуски публікуються робочим процесом через довірену публікацію",
+        "zh-cn": "关键字现在包含 “IOBroker”，正如适配器检查器要求的那样\n版本由工作流程通过可信发布发布"
+      },
+      "0.0.1": {
+        "en": "initial release",
+        "de": "Erstveröffentlichung",
+        "ru": "Начальная версия",
+        "pt": "lançamento inicial",
+        "nl": "Eerste uitgave",
+        "fr": "Première version",
+        "it": "Versione iniziale",
+        "es": "Versión inicial",
+        "pl": "Pierwsze wydanie",
+        "uk": "Початкова версія",
+        "zh-cn": "首次出版"
+      }
     },
-    "native": {
-        "version": "",
-        "webInstance": "web.0"
+    "titleLang": {
+      "en": "CometVisu",
+      "de": "CometVisu",
+      "ru": "КометВизу",
+      "pt": "CometaVisu",
+      "nl": "KomeetVisu",
+      "fr": "ComèteVisu",
+      "it": "CometaVisu",
+      "es": "CometaVisu",
+      "pl": "CometVisu",
+      "uk": "CometVisu",
+      "zh-cn": "彗星维苏"
     },
-    "objects": [],
-    "instanceObjects": [
-        {
-            "_id": "files",
-            "type": "meta",
-            "common": {
-                "name": "CometVisu build uploads",
-                "type": "meta.user"
-            },
-            "native": {}
-        },
-        {
-            "_id": "info",
-            "type": "channel",
-            "common": {
-                "name": "Information"
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.connection",
-            "type": "state",
-            "common": {
-                "role": "indicator.connected",
-                "name": "CometVisu build ready",
-                "type": "boolean",
-                "read": true,
-                "write": false,
-                "def": false
-            },
-            "native": {}
-        }
-    ]
+    "desc": {
+      "en": "Serves the CometVisu visualization through the ioBroker web adapter",
+      "de": "Liefert die CometVisu-Visualisierung über den ioBroker-web-Adapter aus",
+      "ru": "Предоставляет визуализацию CometVisu через веб-адаптер ioBroker",
+      "pt": "Fornece a visualização CometVisu através do adaptador web do ioBroker",
+      "nl": "Levert de CometVisu-visualisatie via de ioBroker-webadapter",
+      "fr": "Fournit la visualisation CometVisu via l'adaptateur web d'ioBroker",
+      "it": "Fornisce la visualizzazione CometVisu tramite l'adattatore web di ioBroker",
+      "es": "Sirve la visualización CometVisu a través del adaptador web de ioBroker",
+      "pl": "Udostępnia wizualizację CometVisu przez adapter web ioBrokera",
+      "uk": "Надає візуалізацію CometVisu через вебадаптер ioBroker",
+      "zh-cn": "通过 ioBroker web 适配器提供 CometVisu 可视化界面"
+    },
+    "authors": [
+      "Florian Schirmer <jolt@tuxbox.org>"
+    ],
+    "keywords": [
+      "ioBroker",
+      "cometvisu",
+      "visualization",
+      "websocket",
+      "web"
+    ],
+    "licenseInformation": {
+      "type": "free",
+      "license": "MIT"
+    },
+    "platform": "Javascript/Node.js",
+    "icon": "cometvisu.png",
+    "enabled": true,
+    "extIcon": "https://raw.githubusercontent.com/joltcoke/ioBroker.cometvisu/main/admin/cometvisu.png",
+    "readme": "https://github.com/joltcoke/ioBroker.cometvisu/blob/main/README.md",
+    "loglevel": "info",
+    "tier": 3,
+    "mode": "daemon",
+    "type": "visualization",
+    "compact": true,
+    "connectionType": "local",
+    "dataSource": "push",
+    "adminUI": {
+      "config": "json"
+    },
+    "dependencies": [
+      {
+        "js-controller": ">=6.0.11"
+      },
+      {
+        "web": ">=7.0.3"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=7.0.23"
+      }
+    ],
+    "messagebox": true,
+    "localLinks": {
+      "ui": {
+        "link": "%web_protocol%://%ip%:%web_port%/cometvisu/",
+        "name": "CometVisu",
+        "color": "greenLight",
+        "order": 10
+      }
+    },
+    "webExtension": "build/lib/web.js"
+  },
+  "native": {
+    "version": "",
+    "webInstance": "web.0"
+  },
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "files",
+      "type": "meta",
+      "common": {
+        "name": "CometVisu build uploads",
+        "type": "meta.user"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "CometVisu build ready",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    }
+  ]
 }
