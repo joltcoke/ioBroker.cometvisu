@@ -1,0 +1,128 @@
+{
+    "common": {
+        "name": "cometvisu",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "uk": "Початкова версія",
+                "zh-cn": "首次出版"
+            }
+        },
+        "titleLang": {
+            "en": "CometVisu",
+            "de": "CometVisu",
+            "ru": "КометВизу",
+            "pt": "CometaVisu",
+            "nl": "KomeetVisu",
+            "fr": "ComèteVisu",
+            "it": "CometaVisu",
+            "es": "CometaVisu",
+            "pl": "CometVisu",
+            "uk": "CometVisu",
+            "zh-cn": "彗星维苏"
+        },
+        "desc": {
+            "en": "Serves the CometVisu visualization and provides its ioBroker WebSocket backend on one port",
+            "de": "Bedient die CometVisu-Visualisierung und stellt ihr ioBroker WebSocket-Backend auf einem Port bereit",
+            "ru": "Обслуживает визуализацию CometVisu ​​и предоставляет серверную часть ioBroker WebSocket на одном порту.",
+            "pt": "Serve a visualização CometVisu ​​e fornece seu backend ioBroker WebSocket em uma porta",
+            "nl": "Bedient de CometVisu-visualisatie en biedt de ioBroker WebSocket-backend op één poort",
+            "fr": "Sert la visualisation CometVisu ​​et fournit son backend ioBroker WebSocket sur un port",
+            "it": "Serve la visualizzazione CometVisu ​​e fornisce il suo backend ioBroker WebSocket su una porta",
+            "es": "Sirve la visualización de CometVisu ​​y proporciona su backend ioBroker WebSocket en un puerto",
+            "pl": "Obsługuje wizualizację CometVisu ​​i udostępnia backend ioBroker WebSocket na jednym porcie",
+            "uk": "Обслуговує візуалізацію CometVisu ​​та забезпечує серверну частину ioBroker WebSocket на одному порту",
+            "zh-cn": "为 CometVisu 可视化提供服务，并在一个端口上提供其 ioBroker WebSocket 后端"
+        },
+        "authors": ["Florian Schirmer <jolt@tuxbox.org>"],
+        "keywords": ["cometvisu", "visualization", "websocket", "webserver"],
+        "licenseInformation": {
+            "type": "free",
+            "license": "MIT"
+        },
+        "platform": "Javascript/Node.js",
+        "icon": "cometvisu.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/joltcoke/ioBroker.cometvisu/main/admin/cometvisu.png",
+        "readme": "https://github.com/joltcoke/ioBroker.cometvisu/blob/main/README.md",
+        "loglevel": "info",
+        "tier": 3,
+        "mode": "daemon",
+        "type": "visualization",
+        "compact": true,
+        "connectionType": "local",
+        "dataSource": "push",
+        "adminUI": {
+            "config": "json"
+        },
+        "dependencies": [
+            {
+                "js-controller": ">=6.0.11"
+            },
+            {
+                "web": ">=7.0.3"
+            }
+        ],
+        "globalDependencies": [
+            {
+                "admin": ">=7.0.23"
+            }
+        ],
+        "messagebox": true,
+        "localLinks": {
+            "ui": {
+                "link": "%web_protocol%://%ip%:%web_port%/cometvisu/",
+                "name": "CometVisu",
+                "color": "greenLight",
+                "order": 10
+            }
+        },
+        "webExtension": "build/lib/web.js"
+    },
+    "native": {
+        "version": "",
+        "webInstance": "web.0"
+    },
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "files",
+            "type": "meta",
+            "common": {
+                "name": "CometVisu build uploads",
+                "type": "meta.user"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": "Information"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "CometVisu build ready",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        }
+    ]
+}

@@ -1,0 +1,39 @@
+{
+    "i18n": true,
+    "type": "panel",
+    "items": {
+        "_cvHeader": {
+            "type": "header",
+            "text": "CometVisu",
+            "size": 2
+        },
+        "version": {
+            "type": "custom",
+            "url": "custom/customComponents.js?v=101f0e28",
+            "name": "ConfigCustomCometVisu/Components/ConfigCustomCometVisuVersion",
+            "guiApi": 2,
+            "i18n": true,
+            "label": "CometVisu version",
+            "help": "The selected version is unpacked and activated when you save.",
+            "sm": 12,
+            "md": 8,
+            "newLine": true
+        },
+        "_deliveryHeader": {
+            "type": "header",
+            "text": "Delivery",
+            "size": 2,
+            "newLine": true
+        },
+        "webInstance": {
+            "type": "instance",
+            "adapter": "web",
+            "allowDeactivate": false,
+            "label": "Serve through this web instance",
+            "help": "This web instance serves the visualisation under /cometvisu and protects it with its own login.",
+            "sm": 12,
+            "md": 8,
+            "newLine": true
+        }
+    }
+}

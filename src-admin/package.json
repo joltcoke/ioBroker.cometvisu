@@ -1,0 +1,24 @@
+{
+  "name": "iobroker.cometvisu-admin-components",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "module": "./build/customComponents.js",
+  "scripts": {
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "@iobroker/gui-components": "^10.2.1",
+    "@iobroker/json-config": "^9.1.2",
+    "@module-federation/vite": "^1.19.1",
+    "@mui/icons-material": "^9.4.0",
+    "@mui/material": "^9.4.0",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.4",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "typescript": "~5.9.0",
+    "vite": "^8.1.5"
+  }
+}
