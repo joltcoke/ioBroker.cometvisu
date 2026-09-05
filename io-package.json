@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "cometvisu",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "news": {
+      "0.0.3": {
+        "en": "\"ioBroker\" is no longer listed in \"common.keywords\", where the adapter checker rejects it",
+        "de": "„ioBroker“ ist nicht mehr in common.keywords, der Adapter-Checker lehnt es ab",
+        "ru": "«IOBroker» больше не указан в «common.keywords», где средство проверки адаптеров отклоняет его",
+        "pt": "“IOBroker” não aparece mais em “common.keywords”, onde o Adapter Checker o rejeita",
+        "nl": "„IOBroker” staat niet langer vermeld in „common.keywords”, waar de adapterchecker dit weigert",
+        "fr": "« IOBroker » ne figure plus dans « common.keywords », où le vérificateur d'adaptateurs le rejette",
+        "it": "«ioBroker» non è più elencato in «common.keywords», dove Adapter Checker lo rifiuta",
+        "es": "«IOBroker» ya no aparece en «common.keywords», ya que el comprobador de adaptadores lo rechaza",
+        "pl": "„ioBroker” nie jest już wymieniony w „common.keywords”, gdzie moduł sprawdzania adaptera go odrzuca",
+        "uk": "«IObroker» більше не вказано в списку «common.keywords», де перевірка адаптера відхиляє його",
+        "zh-cn": "“ioBroker” 不再在 “common.keywords” 中列出，适配器检查器拒绝了它"
+      },
       "0.0.2": {
         "en": "keywords now contain \"ioBroker\", as the adapter checker asks for\nreleases are published by the workflow through trusted publishing",
         "de": "Keywords enthalten nun „ioBroker“, wie es der Adapter-Checker verlangt\nReleases werden vom Workflow über Trusted Publishing veröffentlicht",

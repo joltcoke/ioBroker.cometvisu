@@ -57,7 +57,7 @@ replaces that entry.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.0.3 (2026-09-05)
 
 - (joltcoke) "ioBroker" is no longer listed in "common.keywords", where the adapter checker rejects it
 
