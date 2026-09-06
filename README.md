@@ -15,6 +15,11 @@
 
 Serves the CometVisu visualization through the ioBroker web adapter
 
+[CometVisu](https://www.cometvisu.org) is a web based visualisation for home automation. It runs
+in the browser, is configured through XML and is developed at
+[CometVisu/CometVisu](https://github.com/CometVisu/CometVisu). This adapter delivers a CometVisu
+build from an ioBroker installation and connects it to ioBroker as its backend.
+
 ## Requirements
 
 The visualisation is delivered by [iobroker.web](https://github.com/ioBroker/ioBroker.web) (7.0.3
