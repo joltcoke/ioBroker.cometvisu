@@ -61,7 +61,7 @@ replaces that entry.
 
 - (joltcoke) the adapter now requires node.js 22 and is tested on 22 and 24
 - (joltcoke) the admin page is available in all eleven languages ioBroker ships
-- (joltcoke) updated express to 5, TypeScript to 6, axios and tar to their current releases
+- (joltcoke) updated express to 5, TypeScript to 6 in both packages, axios and tar to their current releases
 - (joltcoke) dependabot updates are scheduled by cron, wait seven days and use the ioBroker automerge action
 
 ### 0.0.3 (2026-09-05)
