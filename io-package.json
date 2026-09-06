@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "cometvisu",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "news": {
+      "0.0.4": {
+        "en": "the adapter now requires node.js 22 and is tested on 22 and 24\nthe admin page is available in all eleven languages ioBroker ships\nupdated express to 5, TypeScript to 6 in both packages, axios and tar to their current releases\ndependabot updates are scheduled by cron, wait seven days and use the ioBroker automerge action",
+        "de": "Der Adapter benötigt jetzt node.js 22 und wurde am 22 und 24 getestet\nDie Admin-Seite ist in allen elf Sprachen verfügbar, ioBroker\nExpress auf 5 aktualisiert, TypeScript auf 6 in beiden Paketen, Axios und Tar\nDependabot-Updates werden von Cron geplant. Warten Sie 7 Tage und nutzen Sie IOBroker Automerge",
+        "ru": "адаптер теперь требует node.js 22 и протестирован на 22 и 24\nстраница администратора доступна на всех одиннадцати языках, поставляемых IOBroker\nобновлено express до 5, TypeScript до 6 в обоих пакетах, axios и tar до их текущих версий\nобновления dependabot запланированы cron, подождите семь дней и используйте действие IOBroker automerge",
+        "pt": "o adaptador agora exige node.js 22 e é testado em 22 e 24\na página de admin está disponível em onze idiomas.\natualizou express para 5, TypeScript para 6 em ambos os pacotes, axios e tar\nO dependabot é agendado por cron, espere sete dias e use a ação IOBroker automerge",
+        "nl": "de adapter heeft nu node.js 22 nodig en is getest op 22 en 24\nde beheerpagina is beschikbaar in alle elf talen die IOBroker levert\nexpress bijgewerkt naar 5, TypeScript naar 6 in beide pakketten, axios en tar naar hun huidige versies\nupdates van dependabot worden gepland met cron, wacht zeven dagen en gebruik de ioBroker automerge-actie",
+        "fr": "l'adaptateur nécessite node.js 22 et a été testé les 22 et 24\nla page d'administration est disponible dans les onze langues d'IObroker\na mis à jour Express à 5, TypeScript à 6 dans les deux packages, axios et tar aux versions actuelles\nles mises à jour de dependabot sont planifiées par cron, attendez sept jours et utilisez la fusion automatique IObroker",
+        "it": "l'adattatore ora richiede node.js 22 ed è testato su 22 e 24\nla pagina admin è disponibile in undici lingue fornite da IObroker\nexpress aggiornato a 5, TypeScript a 6 in entrambi i pacchetti, axios e tar alle versioni attuali\ngli aggiornamenti sono programmati da cron, attenda 7 giorni e usi IOBroker",
+        "es": "el adaptador ahora necesita node.js 22 y se ha probado los días 22 y 24\nla página de administración está disponible en los once idiomas que IOBroker\nactualizó express a 5, TypeScript a 6 en ambos paquetes, axios y tar a sus versiones actuales\nLas actualizaciones del dependabot se programan por cron, espere siete días y utilice la acción de autounión de ioBroker",
+        "pl": "adapter wymaga teraz pliku node.js 22 i jest testowany na 22 i 24\nstrona administracyjna jest dostępna we wszystkich jedenastu językach iOBroker\nzaktualizowano express do 5, TypeScript do 6 w obu pakietach, axios i tar do ich aktualnych wersji\naktualizacje dependabot są zaplanowane przez cron, poczekaj siedem dni i użyj akcji automerge ioBroker",
+        "uk": "адаптер тепер вимагає node.js 22 і тестується на 22 і 24\nсторінка адміністратора доступна на всіх одинадцяти мовах, що постачається IObroker\nоновлено express до 5, TypeScript до 6 в обох пакетах, axios і tar до їх поточних випусків\nоновлення dependabot заплановані за допомогою cron, зачекайте сім днів і використовуйте дію ioBroker automerge",
+        "zh-cn": "适配器现在需要 node.js 22 并在 22 和 24 上进行了测试\n管理页面支持 IOBroker 发布的所有十一种语言\n将两个包中的 express 更新为 5，TypeScript 更新为 6，axios 和 tar 更新到当前版本\ndependabot 更新由 cron 安排，等待七天后使用 IOBroker 自动合并操作"
+      },
       "0.0.3": {
         "en": "\"ioBroker\" is no longer listed in \"common.keywords\", where the adapter checker rejects it",
         "de": "„ioBroker“ ist nicht mehr in common.keywords, der Adapter-Checker lehnt es ab",

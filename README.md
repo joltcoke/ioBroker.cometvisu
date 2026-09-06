@@ -57,7 +57,7 @@ replaces that entry.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.0.4 (2026-09-06)
 
 - (joltcoke) the adapter now requires node.js 22 and is tested on 22 and 24
 - (joltcoke) the admin page is available in all eleven languages ioBroker ships
