@@ -22,8 +22,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 var utils = __toESM(require("@iobroker/adapter-core"));
-var fs = __toESM(require("fs"));
-var path = __toESM(require("path"));
+var fs = __toESM(require("node:fs"));
+var path = __toESM(require("node:path"));
 var import_releases = require("./lib/releases");
 var import_webSocket = require("./lib/webSocket");
 const FORMER_OWN_SERVER_SETTINGS = [

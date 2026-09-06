@@ -3,8 +3,8 @@
  */
 
 import * as utils from '@iobroker/adapter-core';
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import {
     CUSTOM_FILE_PREFIX,
     type CustomBuildSource,

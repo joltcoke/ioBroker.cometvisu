@@ -45,9 +45,9 @@ __export(releases_exports, {
 });
 module.exports = __toCommonJS(releases_exports);
 var import_axios = __toESM(require("axios"));
-var import_crypto = require("crypto");
-var fs = __toESM(require("fs"));
-var path = __toESM(require("path"));
+var import_node_crypto = require("node:crypto");
+var fs = __toESM(require("node:fs"));
+var path = __toESM(require("node:path"));
 var tar = __toESM(require("tar"));
 const REPO = "CometVisu/CometVisu";
 const RELEASES_URL = `https://api.github.com/repos/${REPO}/releases?per_page=100`;
@@ -166,7 +166,7 @@ function customRootDir(dataDir) {
 }
 function customBuildDir(dataDir, file) {
   const readable = file.replace(/[^A-Za-z0-9._-]/g, "_").slice(0, 64);
-  const hash = (0, import_crypto.createHash)("sha1").update(file).digest("hex").slice(0, 8);
+  const hash = (0, import_node_crypto.createHash)("sha1").update(file).digest("hex").slice(0, 8);
   return path.join(customRootDir(dataDir), `${readable}__${hash}`);
 }
 async function unpackUploadedTarball(tgzPath, dataDir, log, source) {

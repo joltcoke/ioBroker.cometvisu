@@ -1,8 +1,8 @@
 {
     "CometVisu": "CometVisu",
     "CometVisu version": "CometVisu version",
-    "The selected version is unpacked and activated when you save.": "The selected version is unpacked and activated when you save.",
     "Delivery": "Delivery",
     "Serve through this web instance": "Serve through this web instance",
+    "The selected version is unpacked and activated when you save.": "The selected version is unpacked and activated when you save.",
     "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "This web instance serves the visualisation under /cometvisu and protects it with its own login."
 }

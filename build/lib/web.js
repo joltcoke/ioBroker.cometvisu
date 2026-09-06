@@ -34,8 +34,8 @@ __export(web_exports, {
 module.exports = __toCommonJS(web_exports);
 var utils = __toESM(require("@iobroker/adapter-core"));
 var import_express = __toESM(require("express"));
-var fs = __toESM(require("fs"));
-var path = __toESM(require("path"));
+var fs = __toESM(require("node:fs"));
+var path = __toESM(require("node:path"));
 var import_releases = require("./releases");
 var import_webSocket = require("./webSocket");
 class web {

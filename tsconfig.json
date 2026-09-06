@@ -13,6 +13,9 @@
         "checkJs": true,
 
         "noEmitOnError": true,
+        // TypeScript 6 wants this spelled out as soon as "outDir" is set - without it the layout
+        // depends on which files a program happens to contain (TS5011)
+        "rootDir": "./src",
         "outDir": "./build/",
         "removeComments": false,
 

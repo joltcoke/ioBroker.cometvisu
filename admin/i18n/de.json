@@ -1,8 +1,8 @@
 {
     "CometVisu": "CometVisu",
     "CometVisu version": "CometVisu-Version",
-    "The selected version is unpacked and activated when you save.": "Die gewählte Version wird beim Speichern entpackt und aktiviert.",
     "Delivery": "Auslieferung",
     "Serve through this web instance": "Über diese web-Instanz ausliefern",
+    "The selected version is unpacked and activated when you save.": "Die gewählte Version wird beim Speichern entpackt und aktiviert.",
     "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "Diese web-Instanz liefert die Visualisierung unter /cometvisu aus und schützt sie mit ihrer eigenen Anmeldung."
 }

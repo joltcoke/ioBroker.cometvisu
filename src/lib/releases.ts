@@ -2,9 +2,9 @@
 // data directory, so the webserver can serve it.
 
 import axios from 'axios';
-import { createHash } from 'crypto';
-import * as fs from 'fs';
-import * as path from 'path';
+import { createHash } from 'node:crypto';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import * as tar from 'tar';
 
 const REPO = 'CometVisu/CometVisu';

@@ -31,8 +31,11 @@
             "allowDeactivate": false,
             "label": "Serve through this web instance",
             "help": "This web instance serves the visualisation under /cometvisu and protects it with its own login.",
+            "xs": 12,
             "sm": 12,
             "md": 8,
+            "lg": 8,
+            "xl": 8,
             "newLine": true
         }
     }

@@ -5,8 +5,8 @@
 
 import * as utils from '@iobroker/adapter-core';
 import express from 'express';
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { findHtmlRoot, readCustomBuild, resolveVersionSelection } from './releases';
 import { type WebNative, classifyWebSocket } from './webSocket';
 

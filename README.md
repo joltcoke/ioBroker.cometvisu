@@ -57,6 +57,13 @@ replaces that entry.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+
+- (joltcoke) the adapter now requires node.js 22
+- (joltcoke) the admin page is available in all eleven languages ioBroker ships
+- (joltcoke) updated express to 5, TypeScript to 6, axios and tar to their current releases
+- (joltcoke) dependabot updates are scheduled by cron, wait seven days and use the ioBroker automerge action
+
 ### 0.0.3 (2026-09-05)
 
 - (joltcoke) "ioBroker" is no longer listed in "common.keywords", where the adapter checker rejects it

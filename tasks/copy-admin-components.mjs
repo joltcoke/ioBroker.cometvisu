@@ -11,8 +11,7 @@ const entry = 'customComponents.js';
 const jsonConfigFile = 'admin/jsonConfig.json';
 
 if (!existsSync(`${from}/${entry}`)) {
-    console.error(`missing ${from}/${entry} - run "npm --prefix src-admin run build" first`);
-    process.exit(1);
+    throw new Error(`missing ${from}/${entry} - run "npm --prefix src-admin run build" first`);
 }
 
 rmSync(to, { recursive: true, force: true });

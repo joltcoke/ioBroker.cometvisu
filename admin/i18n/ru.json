@@ -1,0 +1,8 @@
+{
+    "CometVisu": "CometVisu",
+    "CometVisu version": "Версия CometVisu",
+    "Delivery": "Доставка",
+    "Serve through this web instance": "Обслуживание через этот веб-экземпляр",
+    "The selected version is unpacked and activated when you save.": "Выбранная версия распаковывается и активируется при сохранении.",
+    "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "Этот веб-экземпляр обслуживает визуализацию в /cometvisu и защищает ее с помощью собственного входа в систему."
+}

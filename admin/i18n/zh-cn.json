@@ -1,0 +1,8 @@
+{
+    "CometVisu": "CometVisu",
+    "CometVisu version": "CometVisu版本",
+    "Delivery": "送货",
+    "Serve through this web instance": "通过此 Web 实例提供服务",
+    "The selected version is unpacked and activated when you save.": "保存时，所选版本将被解压并激活。",
+    "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "该 Web 实例在 /cometvisu 下提供可视化服务，并使用自己的登录名对其进行保护。"
+}

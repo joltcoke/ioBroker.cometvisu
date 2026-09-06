@@ -1,0 +1,8 @@
+{
+    "CometVisu": "CometVisu",
+    "CometVisu version": "Wersja CometVisu",
+    "Delivery": "Dostawa",
+    "Serve through this web instance": "Obsługuj przez tę instancję internetową",
+    "The selected version is unpacked and activated when you save.": "Wybrana wersja zostanie rozpakowana i aktywowana po zapisaniu.",
+    "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "Ta instancja internetowa służy do wizualizacji w /cometvisu i chroni ją własnym loginem."
+}
