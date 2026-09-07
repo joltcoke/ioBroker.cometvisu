@@ -67,6 +67,7 @@ replaces that entry.
 - (joltcoke) the configuration manager and the editor of CometVisu now work, the adapter answers their API
 - (joltcoke) editing requires a login on the web instance unless it is explicitly allowed without one
 - (joltcoke) the editor completes addresses from the ioBroker states
+- (joltcoke) files can be uploaded through the manager again
 
 ### 0.0.4 (2026-09-06)
 

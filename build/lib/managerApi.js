@@ -31,11 +31,13 @@ __export(managerApi_exports, {
   createManagerRouter: () => createManagerRouter
 });
 module.exports = __toCommonJS(managerApi_exports);
+var import_busboy = __toESM(require("busboy"));
 var import_express = __toESM(require("express"));
 var fs = __toESM(require("node:fs"));
 var path = __toESM(require("node:path"));
 var zlib = __toESM(require("node:zlib"));
 var import_managerFs = require("./managerFs");
+const UPLOAD_LIMIT = 100 * 1024 * 1024;
 function contentHash(file) {
   try {
     return zlib.crc32(fs.readFileSync(file));
@@ -188,15 +190,127 @@ function createManagerRouter(ctx) {
     next();
   };
   const text = import_express.default.text({ type: () => true, limit: "16mb" });
-  const body = (req, res, next) => {
+  const isUpload = (req) => {
     var _a;
-    if (((_a = req.headers["content-type"]) != null ? _a : "").toLowerCase().startsWith("multipart/")) {
-      res.status(415).json({ message: "uploading files is not supported yet" });
+    return ((_a = req.headers["content-type"]) != null ? _a : "").toLowerCase().startsWith("multipart/");
+  };
+  const body = (req, res, next) => {
+    if (isUpload(req)) {
+      next();
       return;
     }
     text(req, res, next);
   };
+  function upload(req, res) {
+    const roots = ctx.roots();
+    const folder = (0, import_managerFs.resolvePath)(roots, req.query.path);
+    if (!folder || folder.mounted) {
+      readOnly(res, "path is not allowed");
+      return;
+    }
+    let parser;
+    try {
+      parser = (0, import_busboy.default)({ headers: req.headers, limits: { files: 1, fileSize: UPLOAD_LIMIT } });
+    } catch (e) {
+      failed(res, e);
+      return;
+    }
+    const fields = {};
+    let answered = false;
+    let sawFile = false;
+    const once = (send) => {
+      if (!answered) {
+        answered = true;
+        send();
+      }
+    };
+    parser.on("field", (name, value) => {
+      fields[name] = value;
+    });
+    parser.on("file", (name, stream, info) => {
+      if (name !== "file") {
+        stream.resume();
+        return;
+      }
+      sawFile = true;
+      const header = req.headers["x-file-name"];
+      let raw = info.filename;
+      if (typeof header === "string" && header) {
+        try {
+          raw = decodeURIComponent(header);
+        } catch {
+          raw = header;
+        }
+      }
+      const target = (0, import_managerFs.resolvePath)(roots, folder.relative ? `${folder.relative}/${raw}` : raw);
+      if (!raw || !target || target.mounted || target.relative === folder.relative) {
+        stream.resume();
+        once(() => readOnly(res, "file name is not allowed"));
+        return;
+      }
+      const force = fields.force === "true" || req.query.force === "true";
+      const destination = (0, import_managerFs.writeTarget)(roots, target.relative);
+      if (fs.existsSync(destination) && !force) {
+        stream.resume();
+        once(() => res.status(406).json({ message: "file exists" }));
+        return;
+      }
+      const temporary = `${destination}.${process.pid}.upload`;
+      try {
+        fs.mkdirSync(path.dirname(destination), { recursive: true });
+      } catch (e) {
+        stream.resume();
+        once(() => failed(res, e));
+        return;
+      }
+      const sink = fs.createWriteStream(temporary);
+      const discard = () => {
+        fs.rmSync(temporary, { force: true });
+      };
+      stream.on("limit", () => {
+        sink.destroy();
+        discard();
+        once(() => res.status(413).json({ message: `file is larger than ${UPLOAD_LIMIT} bytes` }));
+      });
+      stream.on("error", (e) => {
+        sink.destroy();
+        discard();
+        once(() => failed(res, e));
+      });
+      sink.on("error", (e) => {
+        discard();
+        once(() => failed(res, e));
+      });
+      sink.on("finish", () => {
+        if (answered) {
+          discard();
+          return;
+        }
+        try {
+          backup(roots, target.relative, destination);
+          fs.renameSync(temporary, destination);
+        } catch (e) {
+          discard();
+          once(() => failed(res, e));
+          return;
+        }
+        once(() => res.json({ message: "created" }));
+      });
+      stream.pipe(sink);
+    });
+    parser.on("error", (e) => once(() => failed(res, e)));
+    parser.on("close", () => {
+      if (!sawFile) {
+        once(() => res.status(400).json({ message: "no file in the request" }));
+      }
+    });
+    req.pipe(parser);
+  }
   router.post("/fs", guard, body, (req, res) => {
+    if (isUpload(req)) {
+      upload(req, res);
+      return;
+    }
     const roots = ctx.roots();
     const resolved = (0, import_managerFs.resolvePath)(roots, req.query.path);
     if (!resolved || resolved.mounted) {

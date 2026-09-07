@@ -7,6 +7,7 @@
 // The router is mounted below the visualisation, so every request carries the login and the session
 // of the web instance that serves it.
 
+import busboy from 'busboy';
 import express, { type NextFunction, type Request, type Response, Router } from 'express';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
@@ -21,6 +22,9 @@ import {
     resolvePath,
     writeTarget,
 } from './managerFs';
+
+/** Largest file the manager may upload. Media files can be sizeable, configs never are. */
+const UPLOAD_LIMIT = 100 * 1024 * 1024;
 
 /** One entry of a directory listing, as the manager expects it. */
 export interface FsEntry {
@@ -315,19 +319,163 @@ export function createManagerRouter(ctx: ManagerContext): Router {
         next();
     };
 
-    // The manager sends the content as text, with the content type of the file being written.
-    // A multipart upload - what the media file dialog uses - is refused rather than stored: parsing
-    // it as text would write the envelope into the file and quietly corrupt it.
+    // The manager sends file content as text, with the content type of the file being written. An
+    // upload arrives as multipart instead; that body is left untouched here and read by upload()
+    // further down, because parsing it as text would store the envelope and corrupt the file.
     const text = express.text({ type: () => true, limit: '16mb' });
+    const isUpload = (req: Request): boolean =>
+        (req.headers['content-type'] ?? '').toLowerCase().startsWith('multipart/');
     const body = (req: Request, res: Response, next: NextFunction): void => {
-        if ((req.headers['content-type'] ?? '').toLowerCase().startsWith('multipart/')) {
-            res.status(415).json({ message: 'uploading files is not supported yet' });
+        if (isUpload(req)) {
+            next();
             return;
         }
         text(req, res, next);
     };
 
+    /**
+     * Take a file the manager uploads. It posts one file in the field "file" to the *folder* named
+     * by "path", so the name comes from the part itself - or from the X-File-Name header, which the
+     * uploader sends as well. "force" arrives as a form field, not as a query parameter.
+     *
+     * @param req request being answered
+     * @param res response to answer
+     */
+    function upload(req: Request, res: Response): void {
+        const roots = ctx.roots();
+        const folder = resolvePath(roots, req.query.path as string | undefined);
+        if (!folder || folder.mounted) {
+            readOnly(res, 'path is not allowed');
+            return;
+        }
+
+        let parser: busboy.Busboy;
+        try {
+            parser = busboy({ headers: req.headers, limits: { files: 1, fileSize: UPLOAD_LIMIT } });
+        } catch (e) {
+            failed(res, e);
+            return;
+        }
+
+        const fields: Record<string, string> = {};
+        let answered = false;
+        // busboy closes when parsing is done, which can be before the file is on disk
+        let sawFile = false;
+        /**
+         * Answer once - a stream can fail after the response went out.
+         *
+         * @param send what to answer with
+         */
+        const once = (send: () => void): void => {
+            if (!answered) {
+                answered = true;
+                send();
+            }
+        };
+
+        parser.on('field', (name, value) => {
+            fields[name] = value;
+        });
+
+        parser.on('file', (name, stream, info) => {
+            if (name !== 'file') {
+                stream.resume();
+                return;
+            }
+            sawFile = true;
+
+            // the client sends the name percent encoded in the header as well, and busboy strips
+            // directories from the multipart name, so the header is the one that can still escape
+            const header = req.headers['x-file-name'];
+            let raw = info.filename;
+            if (typeof header === 'string' && header) {
+                try {
+                    raw = decodeURIComponent(header);
+                } catch {
+                    raw = header;
+                }
+            }
+            const target = resolvePath(roots, folder.relative ? `${folder.relative}/${raw}` : raw);
+            // a name like "../x" has to be caught here, it comes from the client just as the path does
+            if (!raw || !target || target.mounted || target.relative === folder.relative) {
+                stream.resume();
+                once(() => readOnly(res, 'file name is not allowed'));
+                return;
+            }
+
+            const force = fields.force === 'true' || req.query.force === 'true';
+            const destination = writeTarget(roots, target.relative);
+            if (fs.existsSync(destination) && !force) {
+                stream.resume();
+                once(() => res.status(406).json({ message: 'file exists' }));
+                return;
+            }
+
+            const temporary = `${destination}.${process.pid}.upload`;
+            try {
+                fs.mkdirSync(path.dirname(destination), { recursive: true });
+            } catch (e) {
+                stream.resume();
+                once(() => failed(res, e));
+                return;
+            }
+
+            const sink = fs.createWriteStream(temporary);
+            /**
+             * Drop the half written file, whatever went wrong.
+             */
+            const discard = (): void => {
+                fs.rmSync(temporary, { force: true });
+            };
+
+            stream.on('limit', () => {
+                sink.destroy();
+                discard();
+                once(() => res.status(413).json({ message: `file is larger than ${UPLOAD_LIMIT} bytes` }));
+            });
+            stream.on('error', e => {
+                sink.destroy();
+                discard();
+                once(() => failed(res, e));
+            });
+            sink.on('error', e => {
+                discard();
+                once(() => failed(res, e));
+            });
+            sink.on('finish', () => {
+                if (answered) {
+                    discard();
+                    return;
+                }
+                try {
+                    backup(roots, target.relative, destination);
+                    fs.renameSync(temporary, destination);
+                } catch (e) {
+                    discard();
+                    once(() => failed(res, e));
+                    return;
+                }
+                once(() => res.json({ message: 'created' }));
+            });
+
+            stream.pipe(sink);
+        });
+
+        parser.on('error', e => once(() => failed(res, e)));
+        parser.on('close', () => {
+            if (!sawFile) {
+                once(() => res.status(400).json({ message: 'no file in the request' }));
+            }
+        });
+
+        req.pipe(parser);
+    }
+
     router.post('/fs', guard, body, (req: Request, res: Response) => {
+        if (isUpload(req)) {
+            upload(req, res);
+            return;
+        }
         const roots = ctx.roots();
         const resolved = resolvePath(roots, req.query.path as string | undefined);
         if (!resolved || resolved.mounted) {
