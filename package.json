@@ -1,6 +1,6 @@
 {
   "name": "iobroker.cometvisu",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Serves the CometVisu visualization through the ioBroker web adapter",
   "author": {
     "name": "Florian Schirmer",

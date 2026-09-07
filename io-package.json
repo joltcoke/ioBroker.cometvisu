@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "cometvisu",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "news": {
+      "0.0.5": {
+        "en": "the configuration manager and the editor of CometVisu now work, the adapter answers their API\nediting requires a login on the web instance unless it is explicitly allowed without one\nthe editor completes addresses from the ioBroker states\nfiles can be uploaded through the manager again",
+        "de": "Der Configuration Manager und Editor von CometVisu funktionieren jetzt, der Adapter\nBearbeitung erfordert Anmeldung auf der Webinstanz, es sei denn, ohne\nDer Editor ergänzt Adressen aus den ioBroker-Staaten\nDateien wieder über den Manager hochladen",
+        "ru": "менеджер конфигурации и редактор CometVisu теперь работают, адаптер отвечает на их API\nредактирование требует входа в веб-экземпляр, если это явно не разрешено без него\nредактор заполняет адреса из штатов IOBroker\nфайлы можно снова загрузить через менеджер",
+        "pt": "o configurador e o editor do CometVisu agora funcionam, o adaptador responde à API\na edição exige um login na instância web, a menos que seja permitido sem um\no editor preenche endereços dos estados IOBroker\narquivos podem ser reenviados pelo gestor",
+        "nl": "de configuratiemanager en de editor van CometVisu werken nu, de adapter beantwoordt hun API\nvoor de bewerking is een login op de webinstance vereist, tenzij dit expliciet is toegestaan zonder\nde redacteur vult adressen in van de IOBroker-staten\nbestanden kunnen opnieuw via de manager worden geüpload",
+        "fr": "le gestionnaire de configuration et l'éditeur de CometVisu fonctionnent, l'adaptateur répond à leur API\nl'édition nécessite une connexion sur l'instance Web, sauf si c'est explicitement autorisé\nl'éditeur complète les adresses depuis les états d'IObroker\nles fichiers peuvent à nouveau être chargés via le manager",
+        "it": "il gestore e l'editor di CometVisu ora funzionano, l'adattatore risponde alle API\nla modifica richiede un accesso all'istanza web a meno che non sia permesso\nl'editor completa gli indirizzi degli stati IObroker\ni file possono essere ricaricati dal gestore",
+        "es": "el gestor de configuración y el editor de CometVisu ya funcionan, el adaptador responde a su API\neditar requiere iniciar sesión en la instancia web, a menos que esté permitido sin uno\nel editor completa las direcciones de los estados de IOBroker\nlos archivos se pueden volver a subir por el gestor",
+        "pl": "menedżer konfiguracji i edytor CometVisu działają teraz, adapter odpowiada na ich API\nedycja wymaga logowania do instancji internetowej, chyba że jest to wyraźnie dozwolone bez jednego\nedytor uzupełnia adresy ze stanów ioBroker\npliki można ponownie przesłać za pośrednictwem menedżera",
+        "uk": "менеджер конфігурації та редактор CometVisu тепер працюють, адаптер відповідає їх API\nредагування вимагає входу в веб-екземпляр, якщо це явно не дозволено без нього\nредактор заповнює адреси зі станів IObroker\nфайли можуть бути завантажені через менеджер знову",
+        "zh-cn": "配置管理器和CometVisu的编辑器现在可以工作了，适配器会回答他们的API\n编辑需要在 Web 实例上登录，除非明确允许在没有登录的情况下进行编辑\n编辑器完成来自 IOBroker 州的地址\n文件可以再次通过管理器上传"
+      },
       "0.0.4": {
         "en": "the adapter now requires node.js 22 and is tested on 22 and 24\nthe admin page is available in all eleven languages ioBroker ships\nupdated express to 5, TypeScript to 6 in both packages, axios and tar to their current releases\ndependabot updates are scheduled by cron, wait seven days and use the ioBroker automerge action",
         "de": "Der Adapter benötigt jetzt node.js 22 und wurde am 22 und 24 getestet\nDie Admin-Seite ist in allen elf Sprachen verfügbar, ioBroker\nExpress auf 5 aktualisiert, TypeScript auf 6 in beiden Paketen, Axios und Tar\nDependabot-Updates werden von Cron geplant. Warten Sie 7 Tage und nutzen Sie IOBroker Automerge",

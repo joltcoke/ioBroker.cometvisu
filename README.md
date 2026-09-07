@@ -62,7 +62,7 @@ replaces that entry.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.0.5 (2026-09-07)
 
 - (joltcoke) the configuration manager and the editor of CometVisu now work, the adapter answers their API
 - (joltcoke) editing requires a login on the web instance unless it is explicitly allowed without one
