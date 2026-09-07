@@ -37,6 +37,17 @@
             "lg": 8,
             "xl": 8,
             "newLine": true
+        },
+        "allowEditWithoutLogin": {
+            "type": "checkbox",
+            "label": "Allow editing without login",
+            "help": "The configuration editor writes files. It is only protected by the web instance, so editing stays switched off while that instance needs no login.",
+            "xs": 12,
+            "sm": 12,
+            "md": 8,
+            "lg": 8,
+            "xl": 8,
+            "newLine": true
         }
     }
 }

@@ -1,8 +1,10 @@
 {
+    "Allow editing without login": "Разрешить редактирование без входа в систему",
     "CometVisu": "CometVisu",
     "CometVisu version": "Версия CometVisu",
     "Delivery": "Доставка",
     "Serve through this web instance": "Обслуживание через этот веб-экземпляр",
+    "The configuration editor writes files. It is only protected by the web instance, so editing stays switched off while that instance needs no login.": "Редактор конфигурации записывает файлы. Он защищен только веб-экземпляром, поэтому редактирование остается отключенным, пока для этого экземпляра не требуется вход в систему.",
     "The selected version is unpacked and activated when you save.": "Выбранная версия распаковывается и активируется при сохранении.",
     "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "Этот веб-экземпляр обслуживает визуализацию в /cometvisu и защищает ее с помощью собственного входа в систему."
 }

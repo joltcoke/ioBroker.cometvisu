@@ -1,8 +1,10 @@
 {
+    "Allow editing without login": "Bearbeiten ohne Anmeldung zulassen",
     "CometVisu": "CometVisu",
     "CometVisu version": "CometVisu-Version",
     "Delivery": "Auslieferung",
     "Serve through this web instance": "Über diese web-Instanz ausliefern",
+    "The configuration editor writes files. It is only protected by the web instance, so editing stays switched off while that instance needs no login.": "Der Konfigurationseditor schreibt Dateien. Es wird nur durch die Webinstanz geschützt, sodass die Bearbeitung ausgeschaltet bleibt, solange diese Instanz keine Anmeldung benötigt.",
     "The selected version is unpacked and activated when you save.": "Die gewählte Version wird beim Speichern entpackt und aktiviert.",
     "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "Diese web-Instanz liefert die Visualisierung unter /cometvisu aus und schützt sie mit ihrer eigenen Anmeldung."
 }

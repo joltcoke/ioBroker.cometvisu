@@ -62,6 +62,12 @@ replaces that entry.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+
+- (joltcoke) the configuration manager and the editor of CometVisu now work, the adapter answers their API
+- (joltcoke) editing requires a login on the web instance unless it is explicitly allowed without one
+- (joltcoke) the editor completes addresses from the ioBroker states
+
 ### 0.0.4 (2026-09-06)
 
 - (joltcoke) the adapter now requires node.js 22 and is tested on 22 and 24

@@ -136,7 +136,8 @@
   },
   "native": {
     "version": "",
-    "webInstance": "web.0"
+    "webInstance": "web.0",
+    "allowEditWithoutLogin": false
   },
   "objects": [],
   "instanceObjects": [

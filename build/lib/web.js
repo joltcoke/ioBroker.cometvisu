@@ -36,6 +36,8 @@ var utils = __toESM(require("@iobroker/adapter-core"));
 var import_express = __toESM(require("express"));
 var fs = __toESM(require("node:fs"));
 var path = __toESM(require("node:path"));
+var import_managerApi = require("./managerApi");
+var import_managerFs = require("./managerFs");
 var import_releases = require("./releases");
 var import_webSocket = require("./webSocket");
 class web {
@@ -51,6 +53,8 @@ class web {
   servedRoot = null;
   /** set once unload() ran, so a late request does not resurrect the handler */
   unloaded = false;
+  /** the manager API, mounted below the visualisation */
+  manager;
   /** whether the web instance offers a socket at all */
   hasSocket = false;
   /** port of an external socket adapter, null while the socket is on the port of the web adapter */
@@ -61,18 +65,28 @@ class web {
    * Mounts the visualisation into the web adapter's express app.
    *
    * @param _server the web adapter's http(s) server, unused
-   * @param _webSettings settings of the web instance, unused
+   * @param webSettings settings of the web instance, for its authentication
    * @param adapter the web adapter, used for logging
    * @param instanceSettings our own instance object
    * @param app express app of the web adapter
    */
-  constructor(_server, _webSettings, adapter, instanceSettings, app) {
+  constructor(_server, webSettings, adapter, instanceSettings, app) {
+    var _a, _b;
     this.log = adapter.log;
     this.namespace = instanceSettings._id.substring("system.adapter.".length);
     this.native = instanceSettings.native || {};
     this.mountPath = this.namespace.endsWith(".0") ? "/cometvisu" : `/${this.namespace}`;
     this.resolveSocket(adapter);
     this.refresh();
+    const api = (0, import_managerApi.createManagerRouter)({
+      roots: () => (0, import_managerFs.buildRoots)(utils.getAbsoluteInstanceDataDir(this.namespace), this.resolveHtmlRoot()),
+      writable: () => this.mayEdit(webSettings),
+      addresses: () => this.listAddresses(adapter),
+      version: (_b = (_a = instanceSettings.common) == null ? void 0 : _a.version) != null ? _b : "unknown",
+      log: this.log
+    });
+    this.manager = import_express.default.Router();
+    this.manager.use(["/rest/manager/index.php", "/rest/manager"], api);
     app.use(this.mountPath, (req, res, next) => {
       if (this.unloaded) {
         next();
@@ -80,6 +94,10 @@ class web {
       }
       if (req.originalUrl === this.mountPath) {
         res.redirect(301, `${this.mountPath}/`);
+        return;
+      }
+      if (req.path.startsWith("/rest/manager")) {
+        this.manager(req, res, next);
         return;
       }
       res.setHeader("X-CometVisu-Backend-Name", "iobroker");
@@ -100,6 +118,41 @@ class web {
   // No welcomePage() on purpose: iobroker.web appends what the extensions return there *after* it
   // has de-duplicated the list it built from common.localLinks, so an entry here would simply show
   // up a second time. common.localLinks covers both the welcome screen and the link in the admin.
+  /**
+   * The states of this ioBroker installation, for the completion in the config editor. Where the
+   * PHP backend reads KNX group addresses from a file, this is the live list of what the system
+   * has. Very large installations are cut off rather than holding up the web adapter, and the log
+   * says so - a silently shortened list would look complete.
+   *
+   * @param adapter the web adapter we run in
+   */
+  async listAddresses(adapter) {
+    const LIMIT = 5e3;
+    const objects = await adapter.getForeignObjectsAsync("*", "state");
+    const ids = Object.keys(objects != null ? objects : {}).sort((a, b) => a.localeCompare(b));
+    if (ids.length > LIMIT) {
+      this.log.warn(`CometVisu manager: ${ids.length} states found, offering the first ${LIMIT} for completion`);
+    }
+    return ids.slice(0, LIMIT).map((id) => {
+      var _a, _b, _c;
+      const name = (_b = (_a = objects[id]) == null ? void 0 : _a.common) == null ? void 0 : _b.name;
+      const label = typeof name === "string" ? name : (_c = name == null ? void 0 : name.en) != null ? _c : "";
+      return { value: id, label: label ? `${id} (${label})` : id };
+    });
+  }
+  /**
+   * Whether the manager may change files. The API writes to disk, and it is only as protected as
+   * the web instance it hangs below - so an instance without a login keeps it read-only until
+   * that is explicitly accepted in the adapter configuration.
+   *
+   * @param webSettings settings of the web instance we run in
+   */
+  mayEdit(webSettings) {
+    if ((webSettings == null ? void 0 : webSettings.auth) === true) {
+      return true;
+    }
+    return this.native.allowEditWithoutLogin === true;
+  }
   /**
    * Pick up a version that was selected in the admin without restarting the web adapter.
    *

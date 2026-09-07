@@ -7,15 +7,21 @@ import * as utils from '@iobroker/adapter-core';
 import express from 'express';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { createManagerRouter } from './managerApi';
+import { buildRoots } from './managerFs';
 import { findHtmlRoot, readCustomBuild, resolveVersionSelection } from './releases';
 import { type WebNative, classifyWebSocket } from './webSocket';
 
 /** The part of our instance object this extension needs. */
 interface InstanceSettings {
     _id: string;
+    common?: {
+        version?: string;
+    };
     native: {
         version?: string;
         buildUpload?: string;
+        allowEditWithoutLogin?: boolean;
     };
 }
 
@@ -46,6 +52,8 @@ export class web {
     private servedRoot: string | null = null;
     /** set once unload() ran, so a late request does not resurrect the handler */
     private unloaded = false;
+    /** the manager API, mounted below the visualisation */
+    private readonly manager: express.Router;
     /** whether the web instance offers a socket at all */
     private hasSocket = false;
     /** port of an external socket adapter, null while the socket is on the port of the web adapter */
@@ -57,14 +65,14 @@ export class web {
      * Mounts the visualisation into the web adapter's express app.
      *
      * @param _server the web adapter's http(s) server, unused
-     * @param _webSettings settings of the web instance, unused
+     * @param webSettings settings of the web instance, for its authentication
      * @param adapter the web adapter, used for logging
      * @param instanceSettings our own instance object
      * @param app express app of the web adapter
      */
     public constructor(
         _server: unknown,
-        _webSettings: WebSettings,
+        webSettings: WebSettings,
         adapter: ioBroker.Adapter,
         instanceSettings: InstanceSettings,
         app: express.Express,
@@ -77,6 +85,23 @@ export class web {
 
         this.resolveSocket(adapter);
         this.refresh();
+
+        // The API works on the instance data directory, so it answers even while no build is
+        // unpacked. The build is looked up per request, because the configured version can change.
+        // CometVisu assumes a PHP backend for everything it does not recognise and builds the
+        // manager URLs relative to the page: "rest/manager/index.php" for the API and
+        // "rest/manager/environment.php" beside it (io/rest/Client.js). Serving exactly those paths
+        // needs no change in CometVisu at all and works with any build. The form without
+        // "index.php" is accepted too, that is what a rewriting web server would produce.
+        const api = createManagerRouter({
+            roots: () => buildRoots(utils.getAbsoluteInstanceDataDir(this.namespace), this.resolveHtmlRoot()),
+            writable: () => this.mayEdit(webSettings),
+            addresses: () => this.listAddresses(adapter),
+            version: instanceSettings.common?.version ?? 'unknown',
+            log: this.log,
+        });
+        this.manager = express.Router();
+        this.manager.use(['/rest/manager/index.php', '/rest/manager'], api);
         // one stable mount point; what is behind it follows the configuration and the disk
         app.use(this.mountPath, (req, res, next) => {
             if (this.unloaded) {
@@ -89,6 +114,14 @@ export class web {
                 res.redirect(301, `${this.mountPath}/`);
                 return;
             }
+            // The manager API lives below the same mount, so it is protected by the login of the
+            // web instance. It answers before the build is looked at - editing has to work while
+            // nothing is unpacked yet.
+            if (req.path.startsWith('/rest/manager')) {
+                this.manager(req, res, next);
+                return;
+            }
+
             // Tell CometVisu which backend to connect to. The request reaches us through the web
             // adapter, so its origin - and with it its socket, login and session - is the right
             // one, unless the socket lives in another adapter on its own port. Which protocol that
@@ -117,6 +150,42 @@ export class web {
     // No welcomePage() on purpose: iobroker.web appends what the extensions return there *after* it
     // has de-duplicated the list it built from common.localLinks, so an entry here would simply show
     // up a second time. common.localLinks covers both the welcome screen and the link in the admin.
+
+    /**
+     * The states of this ioBroker installation, for the completion in the config editor. Where the
+     * PHP backend reads KNX group addresses from a file, this is the live list of what the system
+     * has. Very large installations are cut off rather than holding up the web adapter, and the log
+     * says so - a silently shortened list would look complete.
+     *
+     * @param adapter the web adapter we run in
+     */
+    private async listAddresses(adapter: ioBroker.Adapter): Promise<{ value: string; label: string }[]> {
+        const LIMIT = 5000;
+        const objects = await adapter.getForeignObjectsAsync('*', 'state');
+        const ids = Object.keys(objects ?? {}).sort((a, b) => a.localeCompare(b));
+        if (ids.length > LIMIT) {
+            this.log.warn(`CometVisu manager: ${ids.length} states found, offering the first ${LIMIT} for completion`);
+        }
+        return ids.slice(0, LIMIT).map(id => {
+            const name = (objects[id] as ioBroker.StateObject | undefined)?.common?.name;
+            const label = typeof name === 'string' ? name : (name?.en ?? '');
+            return { value: id, label: label ? `${id} (${label})` : id };
+        });
+    }
+
+    /**
+     * Whether the manager may change files. The API writes to disk, and it is only as protected as
+     * the web instance it hangs below - so an instance without a login keeps it read-only until
+     * that is explicitly accepted in the adapter configuration.
+     *
+     * @param webSettings settings of the web instance we run in
+     */
+    private mayEdit(webSettings: WebSettings): boolean {
+        if (webSettings?.auth === true) {
+            return true;
+        }
+        return this.native.allowEditWithoutLogin === true;
+    }
 
     /**
      * Pick up a version that was selected in the admin without restarting the web adapter.
