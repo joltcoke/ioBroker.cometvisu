@@ -62,6 +62,8 @@ replaces that entry.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+
 ### 0.0.5 (2026-09-07)
 
 - (joltcoke) the configuration manager and the editor of CometVisu now work, the adapter answers their API
@@ -84,6 +86,8 @@ replaces that entry.
 
 - (joltcoke) keywords now contain "ioBroker", as the adapter checker asks for
 - (joltcoke) releases are published by the workflow through trusted publishing
+
+Older entries are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 
 ## License
 
