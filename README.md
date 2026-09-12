@@ -61,10 +61,11 @@ replaces that entry.
 <!--
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
-
-- (joltcoke) updated @iobroker/testing to 6.2.1, which the adapter checker asks for
 -->
 ### **WORK IN PROGRESS**
+
+- (joltcoke) the settings dialog no longer makes the admin log a failed i18n request and a missing mf-manifest.json
+- (joltcoke) updated @iobroker/testing to 6.2.1, which the adapter checker asks for
 
 ### 0.0.5 (2026-09-07)
 

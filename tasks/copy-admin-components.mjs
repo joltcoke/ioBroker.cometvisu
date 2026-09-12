@@ -8,6 +8,10 @@ import { cpSync, existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs
 const from = 'src-admin/build';
 const to = 'admin/custom';
 const entry = 'customComponents.js';
+// Nothing in our own bundle refers to this file, the admin fetches it on its own: before it
+// registers the component, jsonConfig reads the shared dependencies from "<entry dir>/mf-manifest.json"
+// to check which GUI API generation the component was built against. Without it that request is a 404.
+const manifest = 'mf-manifest.json';
 const jsonConfigFile = 'admin/jsonConfig.json';
 
 if (!existsSync(`${from}/${entry}`)) {
@@ -17,6 +21,7 @@ if (!existsSync(`${from}/${entry}`)) {
 rmSync(to, { recursive: true, force: true });
 cpSync(`${from}/${entry}`, `${to}/${entry}`);
 cpSync(`${from}/assets`, `${to}/assets`, { recursive: true });
+cpSync(`${from}/${manifest}`, `${to}/${manifest}`);
 
 // the chunk file names are part of the entry, so hashing it covers the whole bundle
 const hash = createHash('sha1')

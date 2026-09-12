@@ -12,7 +12,6 @@
             "url": "custom/customComponents.js?v=101f0e28",
             "name": "ConfigCustomCometVisu/Components/ConfigCustomCometVisuVersion",
             "guiApi": 2,
-            "i18n": true,
             "label": "CometVisu version",
             "help": "The selected version is unpacked and activated when you save.",
             "sm": 12,
