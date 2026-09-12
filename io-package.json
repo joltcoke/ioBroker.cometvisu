@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "cometvisu",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "news": {
+      "0.0.6": {
+        "en": "the settings dialog no longer makes the admin log a failed i18n request and a missing mf-manifest.json\nupdated @iobroker/testing to 6.2.1, which the adapter checker asks for",
+        "de": "im Einstellungsdialog protokolliert der Admin keine fehlgeschlagene i18n-Anfrage und keine fehlende mf-manifest.json mehr\n@iobroker/testing auf 6.2.1 aktualisiert, das der Adapter-Checker verlangt",
+        "ru": "диалог настроек больше не делает журнал администратора неудачным запросом i18n и отсутствующим mf-manifest.json\nобновлено @iobroker/testing до версии 6.2.1, которую запрашивает программа проверки адаптеров",
+        "pt": "o diálogo de configurações não faz mais com que o admin registre uma falha no i18n e mf-manifest.json\natualizou @iobroker/testing para 6.2.1, que o Adapter Checker pede",
+        "nl": "het instellingenvenster maakt van het beheerderslogboek niet langer een mislukte i18n-aanvraag en een ontbrekende mf-manifest.json\n@iobroker/testing bijgewerkt naar 6.2.1, waar de adapterchecker om vraagt",
+        "fr": "la boîte de dialogue des paramètres n'indique plus l'échec de la requête i18n et l'absence de mf-manifest.json\na mis à jour @iobroker/testing en 6.2.1, demandé par Adapter Checker",
+        "it": "le impostazioni non rendono più l'admin log una richiesta i18n fallita e un mf-manifest.json\naggiornato @iobroker/testing a 6.2.1, richiesto da Adapter Checker",
+        "es": "el cuadro de ajustes ya no convierte el registro de administración en una solicitud i18n fallida y falta mf-manifest.json\nactualizó @iobroker/testing a 6.2.1, que pide el comprobador de adaptadores",
+        "pl": "okno dialogowe ustawień nie powoduje już, że dziennik administratora jest nieudanym żądaniem i18n i brakującym mf-manifest.json\nzaktualizowano @iobroker/testing do wersji 6.2.1, o którą prosi moduł sprawdzania adaptera",
+        "uk": "діалогове вікно налаштувань більше не робить журнал адміністратора невдалим запитом i18n та відсутнім mf-manifest.json\nоновлено @iobroker/testing до 6.2.1, про що запитує перевірка адаптера",
+        "zh-cn": "设置对话框不再将管理员日志设为失败的 i18n 请求和丢失的 mf-manifest.json\n将 @iobroker/testing 更新到 6.2.1，这是适配器检查器要求的"
+      },
       "0.0.5": {
         "en": "the configuration manager and the editor of CometVisu now work, the adapter answers their API\nediting requires a login on the web instance unless it is explicitly allowed without one\nthe editor completes addresses from the ioBroker states\nfiles can be uploaded through the manager again",
         "de": "Der Configuration Manager und Editor von CometVisu funktionieren jetzt, der Adapter\nBearbeitung erfordert Anmeldung auf der Webinstanz, es sei denn, ohne\nDer Editor ergänzt Adressen aus den ioBroker-Staaten\nDateien wieder über den Manager hochladen",
