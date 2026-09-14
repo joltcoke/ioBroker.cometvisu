@@ -8,7 +8,7 @@
     "build": "vite build"
   },
   "devDependencies": {
-    "@iobroker/gui-components": "^10.2.1",
+    "@iobroker/gui-components": "^10.2.3",
     "@iobroker/json-config": "^9.1.2",
     "@module-federation/vite": "^1.19.1",
     "@mui/icons-material": "^9.4.0",
