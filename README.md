@@ -64,12 +64,16 @@ replaces that entry.
 -->
 ### **WORK IN PROGRESS**
 
-- (joltcoke) the settings component requires admin 8.0.11, which is the first version that can load it
 - (joltcoke) a CometVisu build is downloaded and unpacked when it is chosen in the settings, so starting the adapter no longer needs GitHub at all
+- (joltcoke) setting the version outside the settings dialog no longer fetches anything: pick it there once and save, which a newly created instance now needs as well
 - (joltcoke) an archive uploaded again under the same name is unpacked right away instead of only after a manual restart of the instance
-- (joltcoke) the settings dialog is translated and shows how far the preparation of a build has come
-- (joltcoke) the two version fields in the settings take the width they need instead of most of the panel
+- (joltcoke) the settings dialog shows how far the preparation of a build has come, and marks the selected version once it lies ready on the server
+- (joltcoke) releases that were only tried out are removed when the settings dialog is closed instead of lying around until the next start
 - (joltcoke) the settings dialog says when the release list is missing because GitHub rate limited the browser, and from when it will work again
+- (joltcoke) the texts of the settings dialog are translated into all eleven adapter languages
+- (joltcoke) the two version fields in the settings take the width they need instead of most of the panel
+- (joltcoke) the settings component requires admin 8.0.11, which is the first version that can load it
+- (joltcoke) updated @iobroker/json-config to 10.0.0, @iobroker/gui-components to 10.2.3 and @module-federation/vite to 1.21.3
 
 ### 0.0.6 (2026-09-12)
 
