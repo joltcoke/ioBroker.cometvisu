@@ -274,8 +274,11 @@ export default class ConfigCustomCometVisuVersion extends ConfigGeneric<ConfigGe
                 .sort((a, b) => (b.modifiedAt || b.createdAt || 0) - (a.modifiedAt || a.createdAt || 0))
                 .map(entry => entry.file);
             this.setState({ uploads, uploadsLoaded: true }, () => this.updateError());
-        } catch {
-            // without a readable list nothing can be judged as missing
+        } catch (e: unknown) {
+            // Without a readable list nothing can be judged as missing. Reported to the console
+            // rather than swallowed: an empty selection should not look the same whether there are
+            // no uploads or the read failed.
+            console.warn(`cometvisu: could not read the uploaded archives of ${this.objectId}`, e);
             this.setState({ uploads: [], uploadsLoaded: false }, () => this.updateError());
         }
     }
