@@ -62,7 +62,7 @@ replaces that entry.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 0.0.7 (2026-09-14)
 
 - (joltcoke) a CometVisu build is downloaded and unpacked when it is chosen in the settings, so starting the adapter no longer needs GitHub at all
 - (joltcoke) setting the version outside the settings dialog no longer fetches anything: pick it there once and save, which a newly created instance now needs as well
@@ -97,11 +97,6 @@ replaces that entry.
 ### 0.0.3 (2026-09-05)
 
 - (joltcoke) "ioBroker" is no longer listed in "common.keywords", where the adapter checker rejects it
-
-### 0.0.2 (2026-09-05)
-
-- (joltcoke) keywords now contain "ioBroker", as the adapter checker asks for
-- (joltcoke) releases are published by the workflow through trusted publishing
 
 Older entries are in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 
