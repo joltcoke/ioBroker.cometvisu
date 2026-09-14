@@ -82,8 +82,12 @@ interface State extends ConfigGenericState {
     error: string;
     /** something worth saying that is not a failure */
     notice: string;
-    /** why the release list is empty, when that is nothing broken - set by loadReleases() alone */
-    warning: string;
+    /**
+     * Why the release list is not what it should be, and how bad that is. Kept apart from `error`:
+     * that one belongs to whatever the user just did, this one to the state of the list, and only
+     * loadReleases() ever touches it.
+     */
+    listStatus: { text: string; kind: 'warning' | 'error' } | null;
     /** how far the adapter has come with the build it is preparing, null while it prepares none */
     progress: { phase: string; done?: number; total?: number } | null;
     /** whether the version now shown lies unpacked on the server - what the green tick reports */
@@ -144,7 +148,7 @@ export default class ConfigCustomCometVisuVersion extends ConfigGeneric<ConfigGe
                 busy: false,
                 error: '',
                 notice: '',
-                warning: '',
+                listStatus: null,
                 progress: null,
                 ready: false,
             },
@@ -308,14 +312,17 @@ export default class ConfigCustomCometVisuVersion extends ConfigGeneric<ConfigGe
                             releases: [],
                             archives: {},
                             releasesLoaded: false,
-                            warning: reset
-                                ? I18n.t(
-                                      'The GitHub rate limit for this address is used up, the official releases cannot be listed until %s',
-                                      reset,
-                                  )
-                                : I18n.t(
-                                      'The GitHub rate limit for this address is used up, the official releases cannot be listed right now',
-                                  ),
+                            listStatus: {
+                                kind: 'warning',
+                                text: reset
+                                    ? I18n.t(
+                                          'The GitHub rate limit for this address is used up, the official releases cannot be listed until %s',
+                                          reset,
+                                      )
+                                    : I18n.t(
+                                          'The GitHub rate limit for this address is used up, the official releases cannot be listed right now',
+                                      ),
+                            },
                         },
                         () => this.updateError(),
                     );
@@ -342,7 +349,7 @@ export default class ConfigCustomCometVisuVersion extends ConfigGeneric<ConfigGe
                         .map(release => release.tag_name),
                     archives,
                     releasesLoaded: true,
-                    warning: '',
+                    listStatus: null,
                 },
                 () => this.updateError()
             );
@@ -353,8 +360,10 @@ export default class ConfigCustomCometVisuVersion extends ConfigGeneric<ConfigGe
                     releases: [],
                     archives: {},
                     releasesLoaded: false,
-                    warning: '',
-                    error: `could not load the CometVisu releases: ${e instanceof Error ? e.message : String(e)}`,
+                    listStatus: {
+                        kind: 'error',
+                        text: `could not load the CometVisu releases: ${e instanceof Error ? e.message : String(e)}`,
+                    },
                 },
                 () => this.updateError()
             );
@@ -597,6 +606,16 @@ export default class ConfigCustomCometVisuVersion extends ConfigGeneric<ConfigGe
                     the field far beyond the width its entries need. Rendered only when there is one,
                     an empty helper text still reserves its line. */}
                 {error ? <FormHelperText error>{error}</FormHelperText> : null}
+                {/* belongs under the field it is about: this says why the list is empty or short,
+                    not what went wrong with the last thing the user did */}
+                {this.state.listStatus ? (
+                    <Typography
+                        variant="body2"
+                        color={this.state.listStatus.kind === 'error' ? 'error' : 'warning.main'}
+                    >
+                        {this.state.listStatus.text}
+                    </Typography>
+                ) : null}
 
                 {/* the same component the field above uses for its label, so both read as one kind
                     of heading - rebuilding size, weight and colour by hand would drift apart at the
@@ -648,14 +667,6 @@ export default class ConfigCustomCometVisuVersion extends ConfigGeneric<ConfigGe
                             color="error"
                         >
                             {this.state.error}
-                        </Typography>
-                    ) : null}
-                    {this.state.warning ? (
-                        <Typography
-                            variant="body2"
-                            color="warning.main"
-                        >
-                            {this.state.warning}
                         </Typography>
                     ) : null}
                     {this.state.notice ? (
