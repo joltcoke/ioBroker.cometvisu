@@ -10,6 +10,8 @@
     "Please select a CometVisu version": "Виберіть версію CometVisu",
     "Ready": "Готово",
     "Serve through this web instance": "Обслуговуйте через цей веб-екземпляр",
+    "The GitHub rate limit for this address is used up, the official releases cannot be listed right now": "Ліміт запитів GitHub для цієї адреси вичерпано, офіційні релізи зараз показати неможливо",
+    "The GitHub rate limit for this address is used up, the official releases cannot be listed until %s": "Ліміт запитів GitHub для цієї адреси вичерпано, офіційні релізи можна буде показати лише після %s",
     "The archive could not be unpacked": "Архів не вдалося розпакувати",
     "The configuration editor writes files. It is only protected by the web instance, so editing stays switched off while that instance needs no login.": "Редактор конфігурації записує файли. Він захищений лише веб-екземпляром, тому редагування залишається вимкненим, поки цей екземпляр не потребує входу.",
     "The instance did not answer - it has to be running to download a release": "Екземпляр не відповів – він має бути запущений, щоб завантажити випуск",

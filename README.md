@@ -69,6 +69,7 @@ replaces that entry.
 - (joltcoke) an archive uploaded again under the same name is unpacked right away instead of only after a manual restart of the instance
 - (joltcoke) the settings dialog is translated and shows how far the preparation of a build has come
 - (joltcoke) the two version fields in the settings take the width they need instead of most of the panel
+- (joltcoke) the settings dialog says when the release list is missing because GitHub rate limited the browser, and from when it will work again
 
 ### 0.0.6 (2026-09-12)
 

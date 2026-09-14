@@ -10,6 +10,8 @@
     "Please select a CometVisu version": "Por favor seleccione una versión de CometVisu",
     "Ready": "Listo",
     "Serve through this web instance": "Servir a través de esta instancia web",
+    "The GitHub rate limit for this address is used up, the official releases cannot be listed right now": "El límite de solicitudes de GitHub para esta dirección está agotado, las releases oficiales no se pueden listar en este momento",
+    "The GitHub rate limit for this address is used up, the official releases cannot be listed until %s": "El límite de solicitudes de GitHub para esta dirección está agotado, las releases oficiales no se pueden listar hasta las %s",
     "The archive could not be unpacked": "El archivo no se pudo descomprimir",
     "The configuration editor writes files. It is only protected by the web instance, so editing stays switched off while that instance needs no login.": "El editor de configuración escribe archivos. Solo está protegida por la instancia web, por lo que la edición permanece desactivada mientras esa instancia no necesita iniciar sesión.",
     "The instance did not answer - it has to be running to download a release": "La instancia no respondió: tiene que estar ejecutándose para descargar una versión",

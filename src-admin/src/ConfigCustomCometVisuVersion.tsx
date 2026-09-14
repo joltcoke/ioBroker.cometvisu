@@ -82,6 +82,8 @@ interface State extends ConfigGenericState {
     error: string;
     /** something worth saying that is not a failure */
     notice: string;
+    /** why the release list is empty, when that is nothing broken - set by loadReleases() alone */
+    warning: string;
     /** how far the adapter has come with the build it is preparing, null while it prepares none */
     progress: { phase: string; done?: number; total?: number } | null;
     /** whether the version now shown lies unpacked on the server - what the green tick reports */
@@ -142,6 +144,7 @@ export default class ConfigCustomCometVisuVersion extends ConfigGeneric<ConfigGe
                 busy: false,
                 error: '',
                 notice: '',
+                warning: '',
                 progress: null,
                 ready: false,
             },
@@ -273,10 +276,51 @@ export default class ConfigCustomCometVisuVersion extends ConfigGeneric<ConfigGe
         }
     }
 
+    /**
+     * The local time at which the GitHub rate limit resets, an empty string when it is a rate limit
+     * without a readable time, and null when the answer is not one at all. Both headers are listed
+     * in the API's "access-control-expose-headers", so the browser is allowed to read them.
+     *
+     * @param response the answer GitHub returned
+     */
+    private rateLimitReset(response: Response): string | null {
+        // GitHub answers 403 for other reasons too, and those stay errors
+        if (response.status !== 403 && response.status !== 429) {
+            return null;
+        }
+        if (response.headers.get('x-ratelimit-remaining') !== '0') {
+            return null;
+        }
+        const reset = Number(response.headers.get('x-ratelimit-reset'));
+        return Number.isFinite(reset) && reset > 0 ? new Date(reset * 1000).toLocaleTimeString() : '';
+    }
+
     private async loadReleases(): Promise<void> {
         try {
             const response = await fetch(RELEASES_URL, { headers: { Accept: 'application/vnd.github+json' } });
             if (!response.ok) {
+                const reset = this.rateLimitReset(response);
+                if (reset !== null) {
+                    // nothing is broken: the uploads stay usable and the configured version keeps
+                    // being served, so this is a warning and not an error
+                    this.setState(
+                        {
+                            releases: [],
+                            archives: {},
+                            releasesLoaded: false,
+                            warning: reset
+                                ? I18n.t(
+                                      'The GitHub rate limit for this address is used up, the official releases cannot be listed until %s',
+                                      reset,
+                                  )
+                                : I18n.t(
+                                      'The GitHub rate limit for this address is used up, the official releases cannot be listed right now',
+                                  ),
+                        },
+                        () => this.updateError(),
+                    );
+                    return;
+                }
                 throw new Error(`GitHub returned ${response.status}`);
             }
             const releases: Release[] = await response.json();
@@ -298,6 +342,7 @@ export default class ConfigCustomCometVisuVersion extends ConfigGeneric<ConfigGe
                         .map(release => release.tag_name),
                     archives,
                     releasesLoaded: true,
+                    warning: '',
                 },
                 () => this.updateError()
             );
@@ -308,6 +353,7 @@ export default class ConfigCustomCometVisuVersion extends ConfigGeneric<ConfigGe
                     releases: [],
                     archives: {},
                     releasesLoaded: false,
+                    warning: '',
                     error: `could not load the CometVisu releases: ${e instanceof Error ? e.message : String(e)}`,
                 },
                 () => this.updateError()
@@ -602,6 +648,14 @@ export default class ConfigCustomCometVisuVersion extends ConfigGeneric<ConfigGe
                             color="error"
                         >
                             {this.state.error}
+                        </Typography>
+                    ) : null}
+                    {this.state.warning ? (
+                        <Typography
+                            variant="body2"
+                            color="warning.main"
+                        >
+                            {this.state.warning}
                         </Typography>
                     ) : null}
                     {this.state.notice ? (

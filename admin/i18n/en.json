@@ -21,5 +21,7 @@
     "Unpacking": "Unpacking",
     "Ready": "Ready",
     "Upload custom build": "Upload custom build",
-    "A CometVisu build archive (.tar.gz), for example one you built yourself": "A CometVisu build archive (.tar.gz), for example one you built yourself"
+    "A CometVisu build archive (.tar.gz), for example one you built yourself": "A CometVisu build archive (.tar.gz), for example one you built yourself",
+    "The GitHub rate limit for this address is used up, the official releases cannot be listed until %s": "The GitHub rate limit for this address is used up, the official releases cannot be listed until %s",
+    "The GitHub rate limit for this address is used up, the official releases cannot be listed right now": "The GitHub rate limit for this address is used up, the official releases cannot be listed right now"
 }

@@ -10,6 +10,8 @@
     "Please select a CometVisu version": "Selecteer een CometVisu-versie",
     "Ready": "Klaar",
     "Serve through this web instance": "Serveer via deze webinstantie",
+    "The GitHub rate limit for this address is used up, the official releases cannot be listed right now": "De GitHub-verzoeklimiet voor dit adres is opgebruikt, de officiële releases kunnen momenteel niet worden getoond",
+    "The GitHub rate limit for this address is used up, the official releases cannot be listed until %s": "De GitHub-verzoeklimiet voor dit adres is opgebruikt, de officiële releases kunnen pas vanaf %s worden getoond",
     "The archive could not be unpacked": "Het archief kon niet worden uitgepakt",
     "The configuration editor writes files. It is only protected by the web instance, so editing stays switched off while that instance needs no login.": "De configuratie-editor schrijft bestanden. Het wordt alleen beschermd door de webinstantie, dus bewerken blijft uitgeschakeld terwijl die instantie niet hoeft in te loggen.",
     "The instance did not answer - it has to be running to download a release": "De instance heeft niet geantwoord. De instance moet actief zijn om een release te kunnen downloaden",

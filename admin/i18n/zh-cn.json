@@ -10,6 +10,8 @@
     "Please select a CometVisu version": "请选择 CometVisu 版本",
     "Ready": "准备好",
     "Serve through this web instance": "通过此 Web 实例提供服务",
+    "The GitHub rate limit for this address is used up, the official releases cannot be listed right now": "该地址的 GitHub 请求限制已用完，目前无法列出正式版本",
+    "The GitHub rate limit for this address is used up, the official releases cannot be listed until %s": "该地址的 GitHub 请求限制已用完，%s 之前无法列出正式版本",
     "The archive could not be unpacked": "存档无法解压",
     "The configuration editor writes files. It is only protected by the web instance, so editing stays switched off while that instance needs no login.": "配置编辑器写入文件。它仅受 Web 实例的保护，因此当该实例不需要登录时编辑保持关闭状态。",
     "The instance did not answer - it has to be running to download a release": "实例没有应答 - 它必须正在运行才能下载版本",
