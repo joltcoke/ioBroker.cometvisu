@@ -62,6 +62,10 @@ replaces that entry.
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+
+- (joltcoke) the settings component requires admin 8.0.11, which is the first version that can load it
+
 ### 0.0.6 (2026-09-12)
 
 - (joltcoke) the settings dialog no longer makes the admin log a failed i18n request and a missing mf-manifest.json
