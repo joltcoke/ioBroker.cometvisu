@@ -489,13 +489,21 @@ export default class ConfigCustomCometVisuVersion extends ConfigGeneric<ConfigGe
             <Box sx={{ width: '100%' }}>
                 {/* the status belongs next to the field it is about, so both share a row; aligned at
                     the bottom because the FormControl carries its label above the input */}
-                <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 1 }}>
-                    {/* no fullWidth: the field takes the width of the entry it shows, down to a
-                        width that still fits the label and up to the width of its grid cell */}
+                {/* gap 2 is the grid's own column spacing, so the status starts exactly where the
+                    neighbouring column would; wrapping keeps it from squeezing the field when the
+                    window gets narrow */}
+                <Box sx={{ display: 'flex', alignItems: 'flex-end', gap: 2, flexWrap: 'wrap' }}>
                     <FormControl
                         variant="standard"
                         error={!!error}
-                        sx={{ minWidth: 260, maxWidth: '100%' }}
+                        sx={{
+                            // exactly as wide as the four-column field below: in a twelve-column
+                            // grid with a 16px gutter, eight columns are twice four plus one gutter,
+                            // so half of this cell minus half a gutter is a four-column width
+                            width: { xs: '100%', md: 'calc(50% - 8px)' },
+                            // without this the longest entry wins and the cell overflows
+                            minWidth: 0,
+                        }}
                     >
                         <InputLabel>{this.getText(this.props.schema.label)}</InputLabel>
                         <Select

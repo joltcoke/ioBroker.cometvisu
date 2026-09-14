@@ -183,27 +183,13 @@ class web {
    * (yet). Uses the same resolution as the adapter itself.
    */
   resolveHtmlRoot() {
-    var _a, _b;
+    var _a, _b, _c, _d;
     const dataDir = utils.getAbsoluteInstanceDataDir(this.namespace);
     const selection = (0, import_releases.resolveVersionSelection)(this.native.version || "", this.native.buildUpload);
     if (selection.kind === "custom") {
       return (_b = (_a = (0, import_releases.readCustomBuild)(dataDir, selection.file)) == null ? void 0 : _a.htmlRoot) != null ? _b : null;
     }
-    const releaseDir = selection.tag ? path.join(dataDir, "cometvisu", selection.tag) : this.findSingleReleaseDir(dataDir);
-    return releaseDir && fs.existsSync(path.join(releaseDir, ".complete")) ? (0, import_releases.findHtmlRoot)(releaseDir) : null;
-  }
-  /**
-   * The one unpacked release directory, ignoring the uploaded builds.
-   *
-   * @param dataDir the instance data directory
-   */
-  findSingleReleaseDir(dataDir) {
-    const root = path.join(dataDir, "cometvisu");
-    if (!fs.existsSync(root)) {
-      return null;
-    }
-    const dirs = fs.readdirSync(root, { withFileTypes: true }).filter((entry) => entry.isDirectory() && entry.name !== "custom" && !entry.name.startsWith("__")).map((entry) => path.join(root, entry.name));
-    return dirs.length === 1 ? dirs[0] : null;
+    return (_d = (_c = (0, import_releases.readReleaseBuild)(dataDir, selection.tag)) == null ? void 0 : _c.htmlRoot) != null ? _d : null;
   }
   /**
    * Work out which socket CometVisu has to connect to. An external socket adapter runs on its own

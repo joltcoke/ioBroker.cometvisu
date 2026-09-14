@@ -68,6 +68,7 @@ replaces that entry.
 - (joltcoke) a CometVisu build is downloaded and unpacked when it is chosen in the settings, so starting the adapter no longer needs GitHub at all
 - (joltcoke) an archive uploaded again under the same name is unpacked right away instead of only after a manual restart of the instance
 - (joltcoke) the settings dialog is translated and shows how far the preparation of a build has come
+- (joltcoke) the two version fields in the settings take the width they need instead of most of the panel
 
 ### 0.0.6 (2026-09-12)
 

@@ -38,6 +38,8 @@ __export(releases_exports, {
   listCustomBuilds: () => listCustomBuilds,
   pruneReleaseBuilds: () => pruneReleaseBuilds,
   readCustomBuild: () => readCustomBuild,
+  readReleaseBuild: () => readReleaseBuild,
+  releaseBuildDir: () => releaseBuildDir,
   removeCustomBuild: () => removeCustomBuild,
   removeLegacyCustomBuild: () => removeLegacyCustomBuild,
   resolveVersionSelection: () => resolveVersionSelection,
@@ -50,14 +52,13 @@ var fs = __toESM(require("node:fs"));
 var path = __toESM(require("node:path"));
 var tar = __toESM(require("tar"));
 const REPO = "CometVisu/CometVisu";
-const RELEASES_URL = `https://api.github.com/repos/${REPO}/releases?per_page=100`;
+const DOWNLOAD_PREFIX = `https://github.com/${REPO}/releases/download/`;
 const CUSTOM_VERSION = "__custom__";
 const CUSTOM_PREFIX = `${CUSTOM_VERSION}:`;
 const CUSTOM_FILE_PREFIX = "[Custom] ";
 const OFFICIAL_FILE_PREFIX = "[Official] ";
 const LEGACY_CUSTOM_PREFIX = "Custom: ";
 const LEGACY_OFFICIAL_PREFIX = "Official: ";
-const LEGACY_LATEST_LABEL = "latest release";
 function resolveVersionSelection(value, legacyBuildUpload) {
   if (value.startsWith(CUSTOM_FILE_PREFIX)) {
     return { kind: "custom", file: value.slice(CUSTOM_FILE_PREFIX.length) };
@@ -69,8 +70,7 @@ function resolveVersionSelection(value, legacyBuildUpload) {
     return { kind: "custom", file: value };
   }
   if (value.startsWith(LEGACY_OFFICIAL_PREFIX)) {
-    const tag = value.slice(LEGACY_OFFICIAL_PREFIX.length);
-    return { kind: "release", tag: tag === LEGACY_LATEST_LABEL ? "" : tag };
+    return { kind: "release", tag: value.slice(LEGACY_OFFICIAL_PREFIX.length) };
   }
   if (value.startsWith(CUSTOM_PREFIX)) {
     return { kind: "custom", file: value.slice(CUSTOM_PREFIX.length) };
@@ -85,28 +85,6 @@ function githubHeaders() {
     Accept: "application/vnd.github+json",
     "User-Agent": "iobroker.cometvisu"
   };
-}
-function buildAsset(release) {
-  const exact = `cometvisu-${release.tag_name.toLowerCase()}.tar.gz`;
-  return release.assets.find((a) => a.name.toLowerCase() === exact) || release.assets.find((a) => /^CometVisu-.*\.tar\.gz$/i.test(a.name));
-}
-async function fetchReleases() {
-  const res = await import_axios.default.get(RELEASES_URL, { headers: githubHeaders(), timeout: 2e4 });
-  return res.data.filter((r) => !!buildAsset(r));
-}
-async function resolveRelease(version) {
-  const releases = await fetchReleases();
-  if (!releases.length) {
-    throw new Error("no CometVisu release with a build archive was found");
-  }
-  if (!version) {
-    return releases.find((r) => !r.prerelease) || releases[0];
-  }
-  const release = releases.find((r) => r.tag_name === version);
-  if (!release) {
-    throw new Error(`CometVisu release "${version}" not found`);
-  }
-  return release;
 }
 function findHtmlRoot(dir) {
   let level = [dir];
@@ -126,38 +104,69 @@ function findHtmlRoot(dir) {
   }
   return dir;
 }
-async function ensureRelease(dataDir, version, log) {
-  const release = await resolveRelease(version);
-  const targetDir = path.join(dataDir, "cometvisu", release.tag_name);
-  const marker = path.join(targetDir, ".complete");
-  if (fs.existsSync(marker)) {
-    log.debug(`CometVisu ${release.tag_name} is already present`);
-    return { tag: release.tag_name, htmlRoot: findHtmlRoot(targetDir) };
-  }
-  const asset = buildAsset(release);
-  if (!asset) {
-    throw new Error(`release ${release.tag_name} has no CometVisu build archive`);
-  }
-  fs.rmSync(targetDir, { recursive: true, force: true });
-  fs.mkdirSync(targetDir, { recursive: true });
-  log.info(`downloading CometVisu ${release.tag_name} (${asset.name}, ${Math.round(asset.size / 1048576)} MB)`);
-  const res = await import_axios.default.get(asset.browser_download_url, {
-    headers: githubHeaders(),
-    responseType: "stream",
-    timeout: 12e4
-  });
-  await extractTarball(res.data, targetDir);
-  fs.writeFileSync(marker, (/* @__PURE__ */ new Date()).toISOString());
-  log.info(`CometVisu ${release.tag_name} unpacked to ${targetDir}`);
-  return { tag: release.tag_name, htmlRoot: findHtmlRoot(targetDir) };
+function releaseBuildDir(dataDir, tag) {
+  return path.join(dataDir, "cometvisu", tag);
 }
-function extractTarball(source, targetDir) {
+function readReleaseBuild(dataDir, tag) {
+  const targetDir = releaseBuildDir(dataDir, tag);
+  return fs.existsSync(path.join(targetDir, ".complete")) ? { tag, htmlRoot: findHtmlRoot(targetDir) } : null;
+}
+async function ensureRelease(dataDir, tag, url, log, onProgress) {
+  var _a;
+  if (!tag) {
+    throw new Error("no CometVisu release given");
+  }
+  if (!url.startsWith(DOWNLOAD_PREFIX)) {
+    throw new Error(`"${url}" is not a download of ${REPO} releases`);
+  }
+  const present = readReleaseBuild(dataDir, tag);
+  if (present) {
+    log.debug(`CometVisu ${tag} is already present`);
+    return present;
+  }
+  const targetDir = releaseBuildDir(dataDir, tag);
+  const stagingDir = `${targetDir}.tmp`;
+  fs.rmSync(stagingDir, { recursive: true, force: true });
+  fs.mkdirSync(stagingDir, { recursive: true });
+  try {
+    log.info(`downloading CometVisu ${tag} from ${url}`);
+    onProgress == null ? void 0 : onProgress({ phase: "downloading" });
+    const res = await import_axios.default.get(url, {
+      headers: githubHeaders(),
+      responseType: "stream",
+      timeout: 12e4
+    });
+    const total = Number((_a = res.headers) == null ? void 0 : _a["content-length"]) || void 0;
+    await extractTarball(
+      res.data,
+      stagingDir,
+      onProgress && ((done) => onProgress({ phase: "downloading", done, total })),
+      onProgress && (() => onProgress({ phase: "unpacking" }))
+    );
+    if (!fs.existsSync(path.join(findHtmlRoot(stagingDir), "index.html"))) {
+      throw new Error("the downloaded archive does not contain a CometVisu build (no index.html found)");
+    }
+    fs.writeFileSync(path.join(stagingDir, ".complete"), (/* @__PURE__ */ new Date()).toISOString());
+    fs.rmSync(targetDir, { recursive: true, force: true });
+    fs.renameSync(stagingDir, targetDir);
+  } finally {
+    fs.rmSync(stagingDir, { recursive: true, force: true });
+  }
+  log.info(`CometVisu ${tag} unpacked to ${targetDir}`);
+  return { tag, htmlRoot: findHtmlRoot(targetDir) };
+}
+function extractTarball(source, targetDir, onBytes, onRead) {
   return new Promise((resolve, reject) => {
     const extract = tar.x({ cwd: targetDir });
     const input = typeof source === "string" ? fs.createReadStream(source) : source;
     input.on("error", reject);
     extract.on("error", reject);
     extract.on("finish", () => resolve());
+    if (onBytes) {
+      let bytes = 0;
+      input.on("data", (chunk) => onBytes(bytes += chunk.length));
+    }
+    input.on("end", () => onRead == null ? void 0 : onRead());
     input.pipe(extract);
   });
 }
@@ -174,19 +183,24 @@ async function unpackUploadedTarball(tgzPath, dataDir, log, source) {
     throw new Error(`uploaded build archive not found at ${tgzPath}`);
   }
   const targetDir = customBuildDir(dataDir, source.file);
-  fs.rmSync(targetDir, { recursive: true, force: true });
-  fs.mkdirSync(targetDir, { recursive: true });
-  log.info(`unpacking uploaded CometVisu build "${source.file}"`);
-  await extractTarball(tgzPath, targetDir);
-  const htmlRoot = findHtmlRoot(targetDir);
-  if (htmlRoot === targetDir && !fs.existsSync(path.join(targetDir, "index.html"))) {
+  const stagingDir = `${targetDir}.tmp`;
+  fs.rmSync(stagingDir, { recursive: true, force: true });
+  fs.mkdirSync(stagingDir, { recursive: true });
+  try {
+    log.info(`unpacking uploaded CometVisu build "${source.file}"`);
+    await extractTarball(tgzPath, stagingDir);
+    if (!fs.existsSync(path.join(findHtmlRoot(stagingDir), "index.html"))) {
+      throw new Error("the uploaded archive does not contain a CometVisu build (no index.html found)");
+    }
+    fs.writeFileSync(path.join(stagingDir, ".complete"), (/* @__PURE__ */ new Date()).toISOString());
+    fs.writeFileSync(path.join(stagingDir, ".source"), JSON.stringify(source));
     fs.rmSync(targetDir, { recursive: true, force: true });
-    throw new Error("the uploaded archive does not contain a CometVisu build (no index.html found)");
+    fs.renameSync(stagingDir, targetDir);
+  } finally {
+    fs.rmSync(stagingDir, { recursive: true, force: true });
   }
-  fs.writeFileSync(path.join(targetDir, ".complete"), (/* @__PURE__ */ new Date()).toISOString());
-  fs.writeFileSync(path.join(targetDir, ".source"), JSON.stringify(source));
   log.info(`uploaded CometVisu build unpacked to ${targetDir}`);
-  return { tag: source.file, htmlRoot };
+  return { tag: source.file, htmlRoot: findHtmlRoot(targetDir) };
 }
 function readSource(targetDir) {
   const sourceFile = path.join(targetDir, ".source");
@@ -263,6 +277,8 @@ function pruneReleaseBuilds(dataDir, keepTag) {
   listCustomBuilds,
   pruneReleaseBuilds,
   readCustomBuild,
+  readReleaseBuild,
+  releaseBuildDir,
   removeCustomBuild,
   removeLegacyCustomBuild,
   resolveVersionSelection,
