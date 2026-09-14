@@ -9,7 +9,7 @@
         },
         "version": {
             "type": "custom",
-            "url": "custom/customComponents.js?v=885ef39b",
+            "url": "custom/customComponents.js?v=87c7ca6f",
             "name": "ConfigCustomCometVisu/Components/ConfigCustomCometVisuVersion",
             "guiApi": 2,
             "label": "CometVisu version",
