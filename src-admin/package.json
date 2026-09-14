@@ -10,7 +10,7 @@
   "devDependencies": {
     "@iobroker/gui-components": "^10.2.1",
     "@iobroker/json-config": "^9.1.2",
-    "@module-federation/vite": "^1.19.1",
+    "@module-federation/vite": "^1.21.3",
     "@mui/icons-material": "^9.4.0",
     "@mui/material": "^9.4.0",
     "@types/react": "^19.2.17",
