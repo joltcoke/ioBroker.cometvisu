@@ -1,5 +1,6 @@
-// Lists CometVisu GitHub releases and downloads/unpacks the selected one into the instance
-// data directory, so the webserver can serve it.
+// Unpacks the CometVisu build that was selected in the admin into the instance data directory, so
+// the web adapter can serve it. The release list is read by the admin component, not here: it hands
+// over the download URL of the archive it picked, which keeps GitHub out of the adapter's start.
 
 import axios from 'axios';
 import { createHash } from 'node:crypto';
@@ -8,7 +9,8 @@ import * as path from 'node:path';
 import * as tar from 'tar';
 
 const REPO = 'CometVisu/CometVisu';
-const RELEASES_URL = `https://api.github.com/repos/${REPO}/releases?per_page=100`;
+/** Only an archive from this project's releases may be downloaded, whoever asks for it. */
+const DOWNLOAD_PREFIX = `https://github.com/${REPO}/releases/download/`;
 
 /** Directory (and legacy version value) for a build the user uploaded instead of a GitHub release. */
 export const CUSTOM_VERSION = '__custom__';
@@ -26,7 +28,6 @@ export const OFFICIAL_FILE_PREFIX = '[Official] ';
 // values written by earlier adapter versions
 const LEGACY_CUSTOM_PREFIX = 'Custom: ';
 const LEGACY_OFFICIAL_PREFIX = 'Official: ';
-const LEGACY_LATEST_LABEL = 'latest release';
 
 /** What a configured version value refers to. */
 export type VersionSelection = { kind: 'custom'; file: string } | { kind: 'release'; tag: string };
@@ -52,8 +53,7 @@ export function resolveVersionSelection(value: string, legacyBuildUpload?: strin
         return { kind: 'custom', file: value };
     }
     if (value.startsWith(LEGACY_OFFICIAL_PREFIX)) {
-        const tag = value.slice(LEGACY_OFFICIAL_PREFIX.length);
-        return { kind: 'release', tag: tag === LEGACY_LATEST_LABEL ? '' : tag };
+        return { kind: 'release', tag: value.slice(LEGACY_OFFICIAL_PREFIX.length) };
     }
     if (value.startsWith(CUSTOM_PREFIX)) {
         return { kind: 'custom', file: value.slice(CUSTOM_PREFIX.length) };
@@ -64,58 +64,11 @@ export function resolveVersionSelection(value: string, legacyBuildUpload?: strin
     return { kind: 'release', tag: value };
 }
 
-interface Asset {
-    name: string;
-    browser_download_url: string;
-    size: number;
-}
-interface Release {
-    tag_name: string;
-    name: string;
-    prerelease: boolean;
-    assets: Asset[];
-}
-
 function githubHeaders(): Record<string, string> {
     return {
         Accept: 'application/vnd.github+json',
         'User-Agent': 'iobroker.cometvisu',
     };
-}
-
-/**
- * The CometVisu build archive of a release, e.g. "CometVisu-v0.12.6.tar.gz".
- *
- * @param release the GitHub release to inspect
- */
-function buildAsset(release: Release): Asset | undefined {
-    const exact = `cometvisu-${release.tag_name.toLowerCase()}.tar.gz`;
-    return (
-        release.assets.find(a => a.name.toLowerCase() === exact) ||
-        release.assets.find(a => /^CometVisu-.*\.tar\.gz$/i.test(a.name))
-    );
-}
-
-async function fetchReleases(): Promise<Release[]> {
-    const res = await axios.get<Release[]>(RELEASES_URL, { headers: githubHeaders(), timeout: 20000 });
-    // only releases that actually ship a built archive can be served
-    return res.data.filter(r => !!buildAsset(r));
-}
-
-async function resolveRelease(version: string): Promise<Release> {
-    const releases = await fetchReleases();
-    if (!releases.length) {
-        throw new Error('no CometVisu release with a build archive was found');
-    }
-    if (!version) {
-        // latest: newest stable, or newest overall if there is no stable release
-        return releases.find(r => !r.prerelease) || releases[0];
-    }
-    const release = releases.find(r => r.tag_name === version);
-    if (!release) {
-        throw new Error(`CometVisu release "${version}" not found`);
-    }
-    return release;
 }
 
 /**
@@ -145,48 +98,109 @@ export function findHtmlRoot(dir: string): string {
 }
 
 /**
- * Make sure the requested version is available locally and return the directory to serve.
- * Downloads and unpacks the release once, then reuses the cached copy.
+ * How far preparing a build has come. The two phases overlap - tar writes while the download is
+ * still running - so "unpacking" means the last byte has arrived and only the writing is left.
+ */
+export interface PrepareProgress {
+    /** which part of the work is running */
+    phase: 'downloading' | 'unpacking';
+    /** bytes that have arrived so far, undefined before the first chunk */
+    done?: number;
+    /** the size GitHub announced, undefined when it announced none */
+    total?: number;
+}
+
+/**
+ * Where a release is unpacked to. The tag is the directory name, so the disk tells what is there.
+ *
+ * @param dataDir the instance data directory
+ * @param tag the release tag
+ */
+export function releaseBuildDir(dataDir: string, tag: string): string {
+    return path.join(dataDir, 'cometvisu', tag);
+}
+
+/**
+ * The unpacked build of a release, or null when it is not (completely) there.
+ *
+ * @param dataDir the instance data directory
+ * @param tag the release tag
+ */
+export function readReleaseBuild(dataDir: string, tag: string): { tag: string; htmlRoot: string } | null {
+    const targetDir = releaseBuildDir(dataDir, tag);
+    return fs.existsSync(path.join(targetDir, '.complete')) ? { tag, htmlRoot: findHtmlRoot(targetDir) } : null;
+}
+
+/**
+ * Download the build archive of a release and unpack it. Called when the admin activates a release,
+ * never at start - by then the build is either there or the instance has nothing to serve.
  *
  * @param dataDir the instance data directory to unpack into
- * @param version the release tag to serve, '' for the latest release
+ * @param tag the release tag, which names the directory
+ * @param url the archive to download, as picked by the admin component
  * @param log the adapter logger
+ * @param onProgress told how far the download has come, so the admin can show it
  */
 export async function ensureRelease(
     dataDir: string,
-    version: string,
+    tag: string,
+    url: string,
     log: ioBroker.Logger,
+    onProgress?: (progress: PrepareProgress) => void,
 ): Promise<{ tag: string; htmlRoot: string }> {
-    const release = await resolveRelease(version);
-    const targetDir = path.join(dataDir, 'cometvisu', release.tag_name);
-    const marker = path.join(targetDir, '.complete');
-
-    if (fs.existsSync(marker)) {
-        log.debug(`CometVisu ${release.tag_name} is already present`);
-        return { tag: release.tag_name, htmlRoot: findHtmlRoot(targetDir) };
+    if (!tag) {
+        throw new Error('no CometVisu release given');
+    }
+    // The URL travels through the admin and the instance object, both of which can be edited, and
+    // whatever arrives here is downloaded and unpacked. So it has to come from the project itself.
+    if (!url.startsWith(DOWNLOAD_PREFIX)) {
+        throw new Error(`"${url}" is not a download of ${REPO} releases`);
     }
 
-    const asset = buildAsset(release);
-    if (!asset) {
-        throw new Error(`release ${release.tag_name} has no CometVisu build archive`);
+    const present = readReleaseBuild(dataDir, tag);
+    if (present) {
+        log.debug(`CometVisu ${tag} is already present`);
+        return present;
     }
 
-    // a partial previous download must not be served
-    fs.rmSync(targetDir, { recursive: true, force: true });
-    fs.mkdirSync(targetDir, { recursive: true });
+    const targetDir = releaseBuildDir(dataDir, tag);
+    // Unpacked next to the final directory and only swapped in once whole, the same way an upload
+    // is handled: a download that breaks off must not leave something half unpacked behind that the
+    // next start would take for a finished build.
+    const stagingDir = `${targetDir}.tmp`;
+    fs.rmSync(stagingDir, { recursive: true, force: true });
+    fs.mkdirSync(stagingDir, { recursive: true });
 
-    log.info(`downloading CometVisu ${release.tag_name} (${asset.name}, ${Math.round(asset.size / 1048576)} MB)`);
-    const res = await axios.get<NodeJS.ReadableStream>(asset.browser_download_url, {
-        headers: githubHeaders(),
-        responseType: 'stream',
-        timeout: 120000,
-    });
+    try {
+        log.info(`downloading CometVisu ${tag} from ${url}`);
+        onProgress?.({ phase: 'downloading' });
+        const res = await axios.get<NodeJS.ReadableStream>(url, {
+            headers: githubHeaders(),
+            responseType: 'stream',
+            timeout: 120000,
+        });
+        const total = Number(res.headers?.['content-length']) || undefined;
+        await extractTarball(
+            res.data,
+            stagingDir,
+            onProgress && (done => onProgress({ phase: 'downloading', done, total })),
+            onProgress && (() => onProgress({ phase: 'unpacking' })),
+        );
 
-    await extractTarball(res.data, targetDir);
+        if (!fs.existsSync(path.join(findHtmlRoot(stagingDir), 'index.html'))) {
+            throw new Error('the downloaded archive does not contain a CometVisu build (no index.html found)');
+        }
+        fs.writeFileSync(path.join(stagingDir, '.complete'), new Date().toISOString());
 
-    fs.writeFileSync(marker, new Date().toISOString());
-    log.info(`CometVisu ${release.tag_name} unpacked to ${targetDir}`);
-    return { tag: release.tag_name, htmlRoot: findHtmlRoot(targetDir) };
+        fs.rmSync(targetDir, { recursive: true, force: true });
+        fs.renameSync(stagingDir, targetDir);
+    } finally {
+        // nothing to remove after a successful rename, everything after a failure
+        fs.rmSync(stagingDir, { recursive: true, force: true });
+    }
+
+    log.info(`CometVisu ${tag} unpacked to ${targetDir}`);
+    return { tag, htmlRoot: findHtmlRoot(targetDir) };
 }
 
 /**
@@ -195,14 +209,30 @@ export async function ensureRelease(
  *
  * @param source a readable .tar.gz stream or the path to a local .tar.gz file
  * @param targetDir the directory to extract into (must already exist)
+ * @param onBytes told how many bytes have arrived so far
+ * @param onRead told when the source is through and only the writing is left
  */
-function extractTarball(source: NodeJS.ReadableStream | string, targetDir: string): Promise<void> {
+function extractTarball(
+    source: NodeJS.ReadableStream | string,
+    targetDir: string,
+    onBytes?: (bytes: number) => void,
+    onRead?: () => void,
+): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         const extract = tar.x({ cwd: targetDir });
         const input: NodeJS.ReadableStream = typeof source === 'string' ? fs.createReadStream(source) : source;
         input.on('error', reject);
         extract.on('error', reject);
         extract.on('finish', () => resolve());
+        if (onBytes) {
+            // Counted here and not around the pipe: a stream emits nothing synchronously, so the
+            // listener is in place before the first chunk moves, and no byte is missed.
+            let bytes = 0;
+            input.on('data', (chunk: Buffer | string) => onBytes((bytes += chunk.length)));
+        }
+        // The source is through, only the writing is left - which is not the same moment as the
+        // promise resolving, that one waits for tar to have written everything.
+        input.on('end', () => onRead?.());
         input.pipe(extract);
     });
 }
@@ -262,24 +292,37 @@ export async function unpackUploadedTarball(
         throw new Error(`uploaded build archive not found at ${tgzPath}`);
     }
     const targetDir = customBuildDir(dataDir, source.file);
+    // Unpacked beside the final directory and only swapped in once it is complete. An upload of an
+    // archive that is already in use is unpacked while the web adapter serves the previous build of
+    // it, so that one must stay in place until there is a whole new one - and has to survive an
+    // upload that turns out to be no CometVisu build at all.
+    const stagingDir = `${targetDir}.tmp`;
 
-    // a previous build of the same archive must be replaced completely
-    fs.rmSync(targetDir, { recursive: true, force: true });
-    fs.mkdirSync(targetDir, { recursive: true });
+    // a leftover of an unpacking that was cut short must not be added to
+    fs.rmSync(stagingDir, { recursive: true, force: true });
+    fs.mkdirSync(stagingDir, { recursive: true });
 
-    log.info(`unpacking uploaded CometVisu build "${source.file}"`);
-    await extractTarball(tgzPath, targetDir);
+    try {
+        log.info(`unpacking uploaded CometVisu build "${source.file}"`);
+        await extractTarball(tgzPath, stagingDir);
 
-    const htmlRoot = findHtmlRoot(targetDir);
-    if (htmlRoot === targetDir && !fs.existsSync(path.join(targetDir, 'index.html'))) {
+        if (!fs.existsSync(path.join(findHtmlRoot(stagingDir), 'index.html'))) {
+            throw new Error('the uploaded archive does not contain a CometVisu build (no index.html found)');
+        }
+
+        fs.writeFileSync(path.join(stagingDir, '.complete'), new Date().toISOString());
+        fs.writeFileSync(path.join(stagingDir, '.source'), JSON.stringify(source));
+
+        // the only moment in which the previous build is gone
         fs.rmSync(targetDir, { recursive: true, force: true });
-        throw new Error('the uploaded archive does not contain a CometVisu build (no index.html found)');
+        fs.renameSync(stagingDir, targetDir);
+    } finally {
+        // nothing to remove after a successful rename, everything after a failure
+        fs.rmSync(stagingDir, { recursive: true, force: true });
     }
 
-    fs.writeFileSync(path.join(targetDir, '.complete'), new Date().toISOString());
-    fs.writeFileSync(path.join(targetDir, '.source'), JSON.stringify(source));
     log.info(`uploaded CometVisu build unpacked to ${targetDir}`);
-    return { tag: source.file, htmlRoot };
+    return { tag: source.file, htmlRoot: findHtmlRoot(targetDir) };
 }
 
 /**

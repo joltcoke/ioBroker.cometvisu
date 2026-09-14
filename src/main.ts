@@ -10,10 +10,12 @@ import {
     type CustomBuildSource,
     OFFICIAL_FILE_PREFIX,
     type VersionSelection,
+    type PrepareProgress,
     ensureRelease,
     listCustomBuilds,
     pruneReleaseBuilds,
     readCustomBuild,
+    readReleaseBuild,
     removeCustomBuild,
     removeLegacyCustomBuild,
     resolveVersionSelection,
@@ -43,10 +45,19 @@ const FORMER_OWN_SERVER_SETTINGS = [
 ];
 
 class Cometvisu extends utils.Adapter {
+    /**
+     * How far the build being prepared has come, for the admin to show. Kept in memory and asked
+     * for with "prepareStatus" instead of published as a state: it lives for the length of one
+     * download and would be an object to maintain forever. There is one of them, so two admin
+     * windows preparing at the same time overwrite each other's view - they would fight over the
+     * configured version anyway.
+     */
+    private preparing: (PrepareProgress & { tag: string }) | null = null;
+
     public constructor(options: Partial<utils.AdapterOptions> = {}) {
         super({ ...options, name: 'cometvisu' });
         this.on('ready', this.onReady.bind(this));
-        this.on('message', this.onMessage.bind(this));
+        this.on('message', obj => void this.onMessage(obj));
         this.on('unload', this.onUnload.bind(this));
     }
 
@@ -67,19 +78,27 @@ class Cometvisu extends utils.Adapter {
                 htmlRoot = await this.prepareCustomBuild(dataDir, selection.file);
                 this.log.info(`uploaded CometVisu build prepared in ${htmlRoot}`);
             } else {
-                const result = await ensureRelease(dataDir, selection.tag, this.log);
-                htmlRoot = result.htmlRoot;
-                servedTag = result.tag;
-                this.log.info(`CometVisu ${result.tag} prepared in ${htmlRoot}`);
+                // A release is downloaded when it is picked in the admin, not here: starting must
+                // not depend on GitHub being reachable and within its rate limit.
+                const build = readReleaseBuild(dataDir, selection.tag);
+                if (!build) {
+                    throw new Error(
+                        `CometVisu ${selection.tag || 'release'} is not unpacked - please open the adapter ` +
+                            'settings, pick the version again and save, which downloads it',
+                    );
+                }
+                htmlRoot = build.htmlRoot;
+                servedTag = build.tag;
+                this.log.info(`CometVisu ${build.tag} is served from ${htmlRoot}`);
             }
         } catch (e) {
             this.log.error(`could not prepare the CometVisu build: ${e instanceof Error ? e.message : String(e)}`);
             return;
         }
 
-        // A release is cached as its unpacked directory, so only the one in use is kept - this
-        // runs after the build was prepared, both because "latest" only resolves to a tag in there
-        // and so a failed preparation leaves the existing cache alone.
+        // A release is cached as its unpacked directory, so only the one in use is kept. This runs
+        // after the build was resolved on purpose: a start that found nothing returns above, and
+        // then the existing directories are left alone rather than swept away.
         const dropped = pruneReleaseBuilds(dataDir, servedTag);
         if (dropped.length) {
             this.log.info(`removed unpacked release(s) no longer in use: ${dropped.join(', ')}`);
@@ -214,14 +233,17 @@ class Cometvisu extends utils.Adapter {
      *
      * @param dataDir the instance data directory
      * @param file name of the uploaded archive to serve
+     * @param force unpack without asking whether the stored archive still matches the build. Right
+     * after an upload the upload itself is the answer, and whether the file storage already reports
+     * the new size and time by then is nothing to bet on.
      */
-    private async prepareCustomBuild(dataDir: string, file: string): Promise<string> {
+    private async prepareCustomBuild(dataDir: string, file: string, force = false): Promise<string> {
         if (!file) {
             throw new Error('no CometVisu build selected - please upload one in the adapter settings');
         }
         const source = await this.uploadSource(file);
         const current = readCustomBuild(dataDir, file);
-        if (current && this.matchesUpload(current.source, source)) {
+        if (!force && current && this.matchesUpload(current.source, source)) {
             this.log.debug(`uploaded CometVisu build "${file}" is already unpacked`);
             return current.htmlRoot;
         }
@@ -303,16 +325,150 @@ class Cometvisu extends utils.Adapter {
     }
 
     /**
-     * The admin component asks to remove the build of an archive it just deleted, so the unpacked
-     * files go away right there instead of only at the next start.
+     * The admin component tells us about the archives it just wrote to or deleted from the file
+     * storage, so the unpacked builds follow right there instead of only at the next start.
      *
      * @param obj the admin message
      */
-    private onMessage(obj: ioBroker.Message): void {
-        if (!obj || typeof obj !== 'object' || obj.command !== 'deleteCustomBuild') {
+    private async onMessage(obj: ioBroker.Message): Promise<void> {
+        if (!obj || typeof obj !== 'object') {
             return;
         }
         const file = (obj.message as { file?: string } | undefined)?.file;
+        if (obj.command === 'prepareCustomBuild') {
+            await this.unpackUploadedArchive(obj, file);
+        } else if (obj.command === 'deleteCustomBuild') {
+            this.dropUploadedArchive(obj, file);
+        } else if (obj.command === 'prepareRelease') {
+            await this.unpackRelease(obj);
+        } else if (obj.command === 'prepareStatus') {
+            if (obj.callback) {
+                this.sendTo(obj.from, obj.command, this.preparing, obj.callback);
+            }
+        } else if (obj.command === 'buildStatus') {
+            this.reportBuildStatus(obj);
+        } else if (obj.command === 'pruneBuilds') {
+            await this.pruneBuilds(obj);
+        }
+    }
+
+    /**
+     * Drop the unpacked releases that are not in use. The settings dialog asks for this when it
+     * closes: a release is fetched the moment it is picked, so merely looking around in the list
+     * leaves downloads behind that nothing will ever serve.
+     *
+     * @param obj the admin message
+     */
+    private async pruneBuilds(obj: ioBroker.Message): Promise<void> {
+        const dataDir = utils.getAbsoluteInstanceDataDir(this);
+        // resolveVersion() reads this.config, so it answers with the last saved selection - exactly
+        // what should survive: a release that was only tried out was never saved, and saving one
+        // restarts this instance anyway, where the same pruning runs.
+        const selection = await this.resolveVersion();
+        const keep = selection.kind === 'release' ? selection.tag || null : null;
+        const dropped = pruneReleaseBuilds(dataDir, keep);
+        if (dropped.length) {
+            this.log.info(`removed unpacked release(s) no longer in use: ${dropped.join(', ')}`);
+        }
+        if (obj.callback) {
+            this.sendTo(obj.from, obj.command, { dropped }, obj.callback);
+        }
+    }
+
+    /**
+     * Whether the version the admin shows lies unpacked on disk. The dialog asks when it opens and
+     * after every change, so its tick reports "this is ready to be served" rather than merely "the
+     * last job finished".
+     *
+     * @param obj the admin message, carrying the configured value
+     */
+    private reportBuildStatus(obj: ioBroker.Message): void {
+        const value = (obj.message as { value?: string } | undefined)?.value || '';
+        const dataDir = utils.getAbsoluteInstanceDataDir(this);
+        const selection = resolveVersionSelection(value, this.config.buildUpload);
+        // Without the check for an empty value the answer would be yes: nothing selected resolves to
+        // a release with an empty tag, and that is answered with the one unpacked directory.
+        const ready = !value
+            ? false
+            : selection.kind === 'custom'
+              ? !!readCustomBuild(dataDir, selection.file)
+              : !!readReleaseBuild(dataDir, selection.tag);
+        if (obj.callback) {
+            this.sendTo(obj.from, obj.command, { ready }, obj.callback);
+        }
+    }
+
+    /**
+     * Download and unpack a GitHub release the admin just picked. The component hands over the
+     * archive it chose from the release it read, so this side never talks to the GitHub API - and a
+     * start never has to.
+     *
+     * @param obj the admin message, carrying the release tag and the archive URL
+     */
+    private async unpackRelease(obj: ioBroker.Message): Promise<void> {
+        const { tag, url } = (obj.message as { tag?: string; url?: string } | undefined) || {};
+        let answer: { ok: boolean; tag?: string; error?: string };
+        this.preparing = { tag: tag || '', phase: 'downloading' };
+        try {
+            const build = await ensureRelease(
+                utils.getAbsoluteInstanceDataDir(this),
+                tag || '',
+                url || '',
+                this.log,
+                progress => (this.preparing = { ...progress, tag: tag || '' }),
+            );
+            answer = { ok: true, tag: build.tag };
+        } catch (e) {
+            // reported back instead of thrown, the admin shows it next to the version list
+            const error = e instanceof Error ? e.message : String(e);
+            this.log.error(`could not prepare CometVisu ${tag || '(no tag)'}: ${error}`);
+            answer = { ok: false, error };
+        } finally {
+            this.preparing = null;
+        }
+        if (obj.callback) {
+            this.sendTo(obj.from, obj.command, answer, obj.callback);
+        }
+    }
+
+    /**
+     * Unpack an archive that was just uploaded. Uploading an archive again under the name it already
+     * had leaves the configuration untouched, so nothing restarts this instance - without this the
+     * build unpacked from the previous archive would be served until someone restarts it by hand.
+     *
+     * The archive is unpacked whether or not it is the selected version: every upload has its own
+     * directory anyway, so this keeps them all current and switching to one of them stays instant.
+     *
+     * @param obj the admin message
+     * @param file name of the uploaded archive
+     */
+    private async unpackUploadedArchive(obj: ioBroker.Message, file: string | undefined): Promise<void> {
+        let answer: { ok: boolean; error?: string };
+        this.preparing = { tag: file || '', phase: 'unpacking' };
+        try {
+            const htmlRoot = await this.prepareCustomBuild(utils.getAbsoluteInstanceDataDir(this), file || '', true);
+            this.log.info(`uploaded CometVisu build "${file}" is ready in ${htmlRoot}`);
+            answer = { ok: true };
+        } catch (e) {
+            // reported back instead of thrown, the admin shows it next to the upload button
+            const error = e instanceof Error ? e.message : String(e);
+            this.log.error(`could not unpack the uploaded CometVisu build "${file}": ${error}`);
+            answer = { ok: false, error };
+        } finally {
+            this.preparing = null;
+        }
+        if (obj.callback) {
+            this.sendTo(obj.from, obj.command, answer, obj.callback);
+        }
+    }
+
+    /**
+     * Remove the build of an archive the admin just deleted.
+     *
+     * @param obj the admin message
+     * @param file name of the deleted archive
+     */
+    private dropUploadedArchive(obj: ioBroker.Message, file: string | undefined): void {
         let removed = false;
         if (file) {
             removed = removeCustomBuild(utils.getAbsoluteInstanceDataDir(this), file);

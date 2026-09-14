@@ -1,10 +1,25 @@
 {
+    "%s (missing)": "%s (manquant)",
+    "%s ships no CometVisu build archive": "%s ne fournit aucune archive de build CometVisu",
+    "A CometVisu build archive (.tar.gz), for example one you built yourself": "Une archive de build CometVisu (.tar.gz), par exemple une que vous avez compilée vous-même",
     "Allow editing without login": "Autoriser la modification sans connexion",
     "CometVisu": "CometVisu",
     "CometVisu version": "Version CometVisu",
     "Delivery": "Livraison",
+    "Downloading": "Téléchargement",
+    "Please select a CometVisu version": "Veuillez sélectionner une version de CometVisu",
+    "Ready": "Prêt",
     "Serve through this web instance": "Servir via cette instance Web",
+    "The archive could not be unpacked": "L'archive n'a pas pu être décompressée",
     "The configuration editor writes files. It is only protected by the web instance, so editing stays switched off while that instance needs no login.": "L'éditeur de configuration écrit des fichiers. Il n'est protégé que par l'instance Web, donc l'édition reste désactivée tant que cette instance ne nécessite aucune connexion.",
-    "The selected version is unpacked and activated when you save.": "La version sélectionnée est décompressée et activée lorsque vous enregistrez.",
-    "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "Cette instance Web sert la visualisation sous /cometvisu et la protège avec son propre login."
+    "The instance did not answer - it has to be running to download a release": "L'instance n'a pas répondu : elle doit être en cours d'exécution pour télécharger une version",
+    "The instance did not answer, the upload is unpacked when it starts": "L'instance n'a pas répondu, l'upload est décompressé au démarrage",
+    "The release could not be prepared": "La version n'a pas pu être préparée",
+    "The selected CometVisu version is no longer available": "La version CometVisu sélectionnée n'est plus disponible",
+    "This version is no longer available": "Cette version n'est plus disponible",
+    "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "Cette instance Web sert la visualisation sous /cometvisu et la protège avec son propre login.",
+    "Unpacking": "Décompression",
+    "Upload custom build": "Téléverser un build personnalisé",
+    "[Custom user uploads]": "[Téléchargements utilisateur personnalisés]",
+    "[Official GitHub releases]": "[Versions officielles de GitHub]"
 }

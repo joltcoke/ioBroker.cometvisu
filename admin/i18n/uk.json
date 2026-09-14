@@ -1,10 +1,25 @@
 {
+    "%s (missing)": "%s (відсутній)",
+    "%s ships no CometVisu build archive": "%s не надсилає архів збірки CometVisu",
+    "A CometVisu build archive (.tar.gz), for example one you built yourself": "Архів збірки CometVisu (.tar.gz), наприклад, той, який ви створили самостійно",
     "Allow editing without login": "Дозволити редагування без авторизації",
     "CometVisu": "CometVisu",
     "CometVisu version": "Версія CometVisu",
     "Delivery": "Доставка",
+    "Downloading": "Завантаження",
+    "Please select a CometVisu version": "Виберіть версію CometVisu",
+    "Ready": "Готово",
     "Serve through this web instance": "Обслуговуйте через цей веб-екземпляр",
+    "The archive could not be unpacked": "Архів не вдалося розпакувати",
     "The configuration editor writes files. It is only protected by the web instance, so editing stays switched off while that instance needs no login.": "Редактор конфігурації записує файли. Він захищений лише веб-екземпляром, тому редагування залишається вимкненим, поки цей екземпляр не потребує входу.",
-    "The selected version is unpacked and activated when you save.": "Вибрана версія розпаковується та активується під час збереження.",
-    "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "Цей веб-екземпляр обслуговує візуалізацію в /cometvisu та захищає її власним логіном."
+    "The instance did not answer - it has to be running to download a release": "Екземпляр не відповів – він має бути запущений, щоб завантажити випуск",
+    "The instance did not answer, the upload is unpacked when it starts": "Екземпляр не відповідає, завантаження розпаковується, коли починається",
+    "The release could not be prepared": "Реліз не вдалося підготувати",
+    "The selected CometVisu version is no longer available": "Вибрана версія CometVisu більше не доступна",
+    "This version is no longer available": "Ця версія більше не доступна",
+    "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "Цей веб-екземпляр обслуговує візуалізацію в /cometvisu та захищає її власним логіном.",
+    "Unpacking": "Розпакування",
+    "Upload custom build": "Завантажте спеціальну збірку",
+    "[Custom user uploads]": "[Користувацькі завантаження]",
+    "[Official GitHub releases]": "[Офіційні випуски GitHub]"
 }

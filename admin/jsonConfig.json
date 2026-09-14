@@ -13,7 +13,6 @@
             "name": "ConfigCustomCometVisu/Components/ConfigCustomCometVisuVersion",
             "guiApi": 2,
             "label": "CometVisu version",
-            "help": "The selected version is unpacked and activated when you save.",
             "sm": 12,
             "md": 8,
             "newLine": true

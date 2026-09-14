@@ -1,10 +1,25 @@
 {
-    "Allow editing without login": "Bewerken toestaan ​​zonder inloggen",
+    "%s (missing)": "%s (ontbreekt)",
+    "%s ships no CometVisu build archive": "%s verzendt geen CometVisu-buildarchief",
+    "A CometVisu build archive (.tar.gz), for example one you built yourself": "Een CometVisu-buildarchief (.tar.gz), bijvoorbeeld een bestand dat u zelf hebt gebouwd",
+    "Allow editing without login": "Bewerken toestaan zonder inloggen",
     "CometVisu": "CometVisu",
     "CometVisu version": "CometVisu-versie",
     "Delivery": "Levering",
+    "Downloading": "Downloaden",
+    "Please select a CometVisu version": "Selecteer een CometVisu-versie",
+    "Ready": "Klaar",
     "Serve through this web instance": "Serveer via deze webinstantie",
+    "The archive could not be unpacked": "Het archief kon niet worden uitgepakt",
     "The configuration editor writes files. It is only protected by the web instance, so editing stays switched off while that instance needs no login.": "De configuratie-editor schrijft bestanden. Het wordt alleen beschermd door de webinstantie, dus bewerken blijft uitgeschakeld terwijl die instantie niet hoeft in te loggen.",
-    "The selected version is unpacked and activated when you save.": "De geselecteerde versie wordt uitgepakt en geactiveerd wanneer u opslaat.",
-    "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "Deze webinstantie verzorgt de visualisatie onder /cometvisu en beschermt deze met een eigen login."
+    "The instance did not answer - it has to be running to download a release": "De instance heeft niet geantwoord. De instance moet actief zijn om een release te kunnen downloaden",
+    "The instance did not answer, the upload is unpacked when it starts": "De instantie heeft niet geantwoord. De upload wordt uitgepakt wanneer deze start",
+    "The release could not be prepared": "De release kon niet worden voorbereid",
+    "The selected CometVisu version is no longer available": "De geselecteerde CometVisu-versie is niet langer beschikbaar",
+    "This version is no longer available": "Deze versie is niet langer beschikbaar",
+    "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "Deze webinstantie verzorgt de visualisatie onder /cometvisu en beschermt deze met een eigen login.",
+    "Unpacking": "Uitpakken",
+    "Upload custom build": "Aangepaste build uploaden",
+    "[Custom user uploads]": "[Aangepaste gebruikersuploads]",
+    "[Official GitHub releases]": "[Officiële GitHub-releases]"
 }

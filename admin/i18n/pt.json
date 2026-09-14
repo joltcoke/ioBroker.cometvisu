@@ -1,10 +1,25 @@
 {
+    "%s (missing)": "%s (ausente)",
+    "%s ships no CometVisu build archive": "%s não envia nenhum arquivo de compilação do CometVisu",
+    "A CometVisu build archive (.tar.gz), for example one you built yourself": "Um arquivo de compilação do CometVisu (.tar.gz), por exemplo, um que você mesmo construiu",
     "Allow editing without login": "Permitir edição sem login",
     "CometVisu": "CometVisu",
     "CometVisu version": "Versão CometVisu",
     "Delivery": "Entrega",
+    "Downloading": "Baixando",
+    "Please select a CometVisu version": "Selecione uma versão do CometVisu",
+    "Ready": "Pronto",
     "Serve through this web instance": "Servir por meio desta instância da web",
+    "The archive could not be unpacked": "O arquivo não pôde ser descompactado",
     "The configuration editor writes files. It is only protected by the web instance, so editing stays switched off while that instance needs no login.": "O editor de configuração grava arquivos. Ele é protegido apenas pela instância da web, portanto a edição permanece desativada enquanto a instância não precisa de login.",
-    "The selected version is unpacked and activated when you save.": "A versão selecionada é descompactada e ativada quando você salva.",
-    "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "Esta instância web serve a visualização em /cometvisu e a protege com seu próprio login."
+    "The instance did not answer - it has to be running to download a release": "A instância não respondeu – ela precisa estar em execução para baixar uma versão",
+    "The instance did not answer, the upload is unpacked when it starts": "A instância não respondeu, o upload é descompactado ao iniciar",
+    "The release could not be prepared": "O lançamento não pôde ser preparado",
+    "The selected CometVisu version is no longer available": "A versão selecionada do CometVisu não está mais disponível",
+    "This version is no longer available": "Esta versão não está mais disponível",
+    "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "Esta instância web serve a visualização em /cometvisu e a protege com seu próprio login.",
+    "Unpacking": "Descompactando",
+    "Upload custom build": "Carregar compilação personalizada",
+    "[Custom user uploads]": "[Uploads de usuários personalizados]",
+    "[Official GitHub releases]": "[Lançamentos oficiais do GitHub]"
 }

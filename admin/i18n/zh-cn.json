@@ -1,10 +1,25 @@
 {
+    "%s (missing)": "%s（缺失）",
+    "%s ships no CometVisu build archive": "%s 未提供 CometVisu 构建存档",
+    "A CometVisu build archive (.tar.gz), for example one you built yourself": "CometVisu 构建存档 (.tar.gz)，例如您自己构建的存档",
     "Allow editing without login": "无需登录即可编辑",
     "CometVisu": "CometVisu",
     "CometVisu version": "CometVisu版本",
     "Delivery": "送货",
+    "Downloading": "正在下载",
+    "Please select a CometVisu version": "请选择 CometVisu 版本",
+    "Ready": "准备好",
     "Serve through this web instance": "通过此 Web 实例提供服务",
+    "The archive could not be unpacked": "存档无法解压",
     "The configuration editor writes files. It is only protected by the web instance, so editing stays switched off while that instance needs no login.": "配置编辑器写入文件。它仅受 Web 实例的保护，因此当该实例不需要登录时编辑保持关闭状态。",
-    "The selected version is unpacked and activated when you save.": "保存时，所选版本将被解压并激活。",
-    "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "该 Web 实例在 /cometvisu 下提供可视化服务，并使用自己的登录名对其进行保护。"
+    "The instance did not answer - it has to be running to download a release": "实例没有应答 - 它必须正在运行才能下载版本",
+    "The instance did not answer, the upload is unpacked when it starts": "实例无应答，启动时上传解压",
+    "The release could not be prepared": "无法准备发布",
+    "The selected CometVisu version is no longer available": "所选的 CometVisu 版本不再可用",
+    "This version is no longer available": "该版本不再可用",
+    "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "该 Web 实例在 /cometvisu 下提供可视化服务，并使用自己的登录名对其进行保护。",
+    "Unpacking": "正在解压",
+    "Upload custom build": "上传自定义构建",
+    "[Custom user uploads]": "[自定义用户上传]",
+    "[Official GitHub releases]": "[GitHub 官方发布]"
 }

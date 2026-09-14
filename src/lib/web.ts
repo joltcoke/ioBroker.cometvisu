@@ -9,7 +9,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { createManagerRouter } from './managerApi';
 import { buildRoots } from './managerFs';
-import { findHtmlRoot, readCustomBuild, resolveVersionSelection } from './releases';
+import { readCustomBuild, readReleaseBuild, resolveVersionSelection } from './releases';
 import { type WebNative, classifyWebSocket } from './webSocket';
 
 /** The part of our instance object this extension needs. */
@@ -227,31 +227,7 @@ export class web {
             return readCustomBuild(dataDir, selection.file)?.htmlRoot ?? null;
         }
 
-        // A release is unpacked into a directory named after its tag. An empty tag comes from older
-        // configurations ("latest"), where only the adapter knows which tag that resolved to - it
-        // keeps just the release being served, so the single remaining directory is the right one.
-        const releaseDir = selection.tag
-            ? path.join(dataDir, 'cometvisu', selection.tag)
-            : this.findSingleReleaseDir(dataDir);
-
-        return releaseDir && fs.existsSync(path.join(releaseDir, '.complete')) ? findHtmlRoot(releaseDir) : null;
-    }
-
-    /**
-     * The one unpacked release directory, ignoring the uploaded builds.
-     *
-     * @param dataDir the instance data directory
-     */
-    private findSingleReleaseDir(dataDir: string): string | null {
-        const root = path.join(dataDir, 'cometvisu');
-        if (!fs.existsSync(root)) {
-            return null;
-        }
-        const dirs = fs
-            .readdirSync(root, { withFileTypes: true })
-            .filter(entry => entry.isDirectory() && entry.name !== 'custom' && !entry.name.startsWith('__'))
-            .map(entry => path.join(root, entry.name));
-        return dirs.length === 1 ? dirs[0] : null;
+        return readReleaseBuild(dataDir, selection.tag)?.htmlRoot ?? null;
     }
 
     /**

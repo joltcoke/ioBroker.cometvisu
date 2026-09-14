@@ -1,10 +1,25 @@
 {
+    "%s (missing)": "%s (fehlt)",
+    "%s ships no CometVisu build archive": "%s liefert kein CometVisu-Build-Archiv",
+    "A CometVisu build archive (.tar.gz), for example one you built yourself": "Ein CometVisu-Build-Archiv (.tar.gz), beispielsweise eines, das Sie selbst erstellt haben",
     "Allow editing without login": "Bearbeiten ohne Anmeldung zulassen",
     "CometVisu": "CometVisu",
     "CometVisu version": "CometVisu-Version",
     "Delivery": "Auslieferung",
+    "Downloading": "Herunterladen",
+    "Please select a CometVisu version": "Bitte wählen Sie eine CometVisu-Version aus",
+    "Ready": "Bereit",
     "Serve through this web instance": "Über diese web-Instanz ausliefern",
+    "The archive could not be unpacked": "Das Archiv konnte nicht entpackt werden",
     "The configuration editor writes files. It is only protected by the web instance, so editing stays switched off while that instance needs no login.": "Der Konfigurationseditor schreibt Dateien. Es wird nur durch die Webinstanz geschützt, sodass die Bearbeitung ausgeschaltet bleibt, solange diese Instanz keine Anmeldung benötigt.",
-    "The selected version is unpacked and activated when you save.": "Die gewählte Version wird beim Speichern entpackt und aktiviert.",
-    "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "Diese web-Instanz liefert die Visualisierung unter /cometvisu aus und schützt sie mit ihrer eigenen Anmeldung."
+    "The instance did not answer - it has to be running to download a release": "Die Instanz hat nicht geantwortet - sie muss laufen, um ein Release herunterzuladen",
+    "The instance did not answer, the upload is unpacked when it starts": "Die Instanz hat nicht geantwortet, der Upload wird beim Start entpackt",
+    "The release could not be prepared": "Das Release konnte nicht vorbereitet werden",
+    "The selected CometVisu version is no longer available": "Die ausgewählte CometVisu-Version ist nicht mehr verfügbar",
+    "This version is no longer available": "Diese Version ist nicht mehr verfügbar",
+    "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "Diese web-Instanz liefert die Visualisierung unter /cometvisu aus und schützt sie mit ihrer eigenen Anmeldung.",
+    "Unpacking": "Entpacken",
+    "Upload custom build": "Eigenen Build hochladen",
+    "[Custom user uploads]": "[Eigene Uploads]",
+    "[Official GitHub releases]": "[Offizielle GitHub-Releases]"
 }

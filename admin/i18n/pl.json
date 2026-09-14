@@ -1,10 +1,25 @@
 {
+    "%s (missing)": "%s (brak)",
+    "%s ships no CometVisu build archive": "%s nie dostarcza archiwum kompilacji CometVisu",
+    "A CometVisu build archive (.tar.gz), for example one you built yourself": "Archiwum kompilacji CometVisu (.tar.gz), na przykład takie, które sam zbudowałeś",
     "Allow editing without login": "Zezwól na edycję bez logowania",
     "CometVisu": "CometVisu",
     "CometVisu version": "Wersja CometVisu",
     "Delivery": "Dostawa",
+    "Downloading": "Ściąganie",
+    "Please select a CometVisu version": "Wybierz wersję CometVisu",
+    "Ready": "Gotowy",
     "Serve through this web instance": "Obsługuj przez tę instancję internetową",
+    "The archive could not be unpacked": "Nie można rozpakować archiwum",
     "The configuration editor writes files. It is only protected by the web instance, so editing stays switched off while that instance needs no login.": "Edytor konfiguracji zapisuje pliki. Jest chroniony tylko przez instancję internetową, więc edycja pozostaje wyłączona, dopóki instancja nie wymaga logowania.",
-    "The selected version is unpacked and activated when you save.": "Wybrana wersja zostanie rozpakowana i aktywowana po zapisaniu.",
-    "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "Ta instancja internetowa służy do wizualizacji w /cometvisu i chroni ją własnym loginem."
+    "The instance did not answer - it has to be running to download a release": "Instancja nie odpowiedziała - musi być uruchomiona, aby pobrać wersję",
+    "The instance did not answer, the upload is unpacked when it starts": "Instancja nie odpowiedziała, przesyłanie jest rozpakowywane po uruchomieniu",
+    "The release could not be prepared": "Nie udało się przygotować wydania",
+    "The selected CometVisu version is no longer available": "Wybrana wersja CometVisu nie jest już dostępna",
+    "This version is no longer available": "Ta wersja nie jest już dostępna",
+    "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "Ta instancja internetowa służy do wizualizacji w /cometvisu i chroni ją własnym loginem.",
+    "Unpacking": "Rozpakowywanie",
+    "Upload custom build": "Prześlij niestandardową kompilację",
+    "[Custom user uploads]": "[Niestandardowe przesyłanie plików przez użytkowników]",
+    "[Official GitHub releases]": "[Oficjalne wydania GitHuba]"
 }

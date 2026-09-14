@@ -65,6 +65,9 @@ replaces that entry.
 ### **WORK IN PROGRESS**
 
 - (joltcoke) the settings component requires admin 8.0.11, which is the first version that can load it
+- (joltcoke) a CometVisu build is downloaded and unpacked when it is chosen in the settings, so starting the adapter no longer needs GitHub at all
+- (joltcoke) an archive uploaded again under the same name is unpacked right away instead of only after a manual restart of the instance
+- (joltcoke) the settings dialog is translated and shows how far the preparation of a build has come
 
 ### 0.0.6 (2026-09-12)
 

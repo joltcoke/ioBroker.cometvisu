@@ -1,10 +1,25 @@
 {
+    "%s (missing)": "%s (отсутствует)",
+    "%s ships no CometVisu build archive": "%s не отправляет архив сборки CometVisu",
+    "A CometVisu build archive (.tar.gz), for example one you built yourself": "Архив сборки CometVisu (.tar.gz), например тот, который вы создали самостоятельно",
     "Allow editing without login": "Разрешить редактирование без входа в систему",
     "CometVisu": "CometVisu",
     "CometVisu version": "Версия CometVisu",
     "Delivery": "Доставка",
+    "Downloading": "Загрузка",
+    "Please select a CometVisu version": "Пожалуйста, выберите версию CometVisu",
+    "Ready": "Готово",
     "Serve through this web instance": "Обслуживание через этот веб-экземпляр",
+    "The archive could not be unpacked": "Архив не удалось распаковать",
     "The configuration editor writes files. It is only protected by the web instance, so editing stays switched off while that instance needs no login.": "Редактор конфигурации записывает файлы. Он защищен только веб-экземпляром, поэтому редактирование остается отключенным, пока для этого экземпляра не требуется вход в систему.",
-    "The selected version is unpacked and activated when you save.": "Выбранная версия распаковывается и активируется при сохранении.",
-    "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "Этот веб-экземпляр обслуживает визуализацию в /cometvisu и защищает ее с помощью собственного входа в систему."
+    "The instance did not answer - it has to be running to download a release": "Экземпляр не ответил. Чтобы загрузить выпуск, он должен быть запущен",
+    "The instance did not answer, the upload is unpacked when it starts": "Экземпляр не ответил, загрузка распаковывается при запуске",
+    "The release could not be prepared": "Релиз не удалось подготовить",
+    "The selected CometVisu version is no longer available": "Выбранная версия CometVisu больше не доступна",
+    "This version is no longer available": "Эта версия больше не доступна",
+    "This web instance serves the visualisation under /cometvisu and protects it with its own login.": "Этот веб-экземпляр обслуживает визуализацию в /cometvisu и защищает ее с помощью собственного входа в систему.",
+    "Unpacking": "Распаковка",
+    "Upload custom build": "Загрузить пользовательскую сборку",
+    "[Custom user uploads]": "[Пользовательские загрузки]",
+    "[Official GitHub releases]": "[Официальные релизы GitHub]"
 }
